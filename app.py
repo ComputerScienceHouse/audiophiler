@@ -6,6 +6,10 @@ import botocore
 import host
 
 
+@app.route("/upload", methods=["POST"])
+def upload():
+
+
 def main():
     s3 = boto3.resource(service_name="s3", endpoint_url=host.s3_url)
     data = open("test.mp3", "rb")
