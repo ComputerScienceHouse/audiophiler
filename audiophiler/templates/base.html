@@ -1,6 +1,9 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="audiophiler/static/css/csh-material-bootstrap/dist/css/csh-material-bootstrap.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/css/csh-material-bootstrap/dist/css/csh-material-bootstrap.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -14,20 +17,11 @@
             </button>
             <a class="navbar-brand" href="#">Audiophiler</a>
         </div>
-        <div class="collapse navbar-collapse" id="csh-example-navbar-collapse-2">
-            <ul class="nav navbar-nav navbar-right">
-            </ul>
-        </div>
     </div>
 </nav>
-<div class="container">
-    <div class="row">
-        <script src="audiophiler/static/js/dropzone/dist/dropzone.js"></script>
-        <h1>TESTING</h1>
-        <form action="/file-upload"
-            class="dropzone"
-            id="my-awesome-dropzone"></form>
-    </div>
-</div>
+    <body>
+        {% block body %}
+        {% endblock %}
+    </body>
 </body>
 </html>
