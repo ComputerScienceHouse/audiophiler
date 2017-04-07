@@ -1,6 +1,6 @@
 [submodule "csh-material-bootstrap"]
-	path = csh-material-bootstrap
+	path = audiophiler/static/css/csh-material-bootstrap
 	url = https://github.com/ComputerScienceHouse/csh-material-bootstrap.git
 [submodule "dropzone"]
-	path = dropzone
+	path = audiophiler/static/js/dropzone
 	url = https://github.com/enyo/dropzone.git
