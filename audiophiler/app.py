@@ -8,6 +8,10 @@ def test():
     return render_template("main.html")
 
 
+@app.route("/upload", methods=["POST", "GET"])
+def upload():
+    return render_template("upload.html")
+
 def main():
     #s3 = boto3.resource(service_name="s3", endpoint_url=host.s3_url)
     #data = open("test.mp3", "rb")

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+    <script src="static/js/dropzone/dist/dropzone.js"></script>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Upload</h3>
+        </div>
+        <div class="panel-body">
+            <form action="/upload"
+                  class="dropzone"
+                  id="file-upload"><form>
+        </div>
+    </div>
+{% endblock %}
