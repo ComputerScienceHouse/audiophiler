@@ -1,3 +1,9 @@
 body {
     margin-top: 60px;
 }
+
+.panel.panel-primary {
+    margin-left: 45px;
+    margin-right: 45px;
+    margin-top: 100px;
+}
