@@ -5,10 +5,31 @@
         <div class="panel-heading">
             <h3 class="panel-title">Upload</h3>
         </div>
+        <!--
         <div class="panel-body">
             <form action="/upload"
                   class="dropzone"
+                  method = "post"
                   id="file-upload"><form>
         </div>
+        -->
+        <div class="panel-body">
+            <div id="fileUpload" class="dropzone">
+                <div class="dz-message" data-dz-message><span>Click or drop images here to upload</span></div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script>
+        Dropzone.autoDiscover = false;
+            $(function() {
+                var myDropzone = new Dropzone('div#fileUpload', {
+                    url: '/upload',
+                    uploadMultiple: false,
+                    autoProcessQueue: true,
+                    parallelUploads: 3,
+                    maxFilesize: 1000, // This is pretty large but it's okay
+                });
+            });
+        </script>
     </div>
 {% endblock %}
