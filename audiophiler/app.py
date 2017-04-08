@@ -35,7 +35,7 @@ def upload():
 def get_file(filename):
     s3 = get_resource()
     s3_response = s3.Object(BUCKET_NAME, filename)
-    return Response(s3_response.get()['Body'].read(amt=512))
+    return Response(s3_response.get()['Body'].read())
 
 
 def get_resource():
