@@ -5,17 +5,10 @@
         <div class="panel-heading">
             <h3 class="panel-title">Upload</h3>
         </div>
-        <!--
-        <div class="panel-body">
-            <form action="/upload"
-                  class="dropzone"
-                  method = "post"
-                  id="file-upload"><form>
-        </div>
-        -->
         <div class="panel-body">
             <div id="fileUpload" class="dropzone">
-                <div class="dz-message" data-dz-message><span>Click or drop images here to upload</span></div>
+                <div class="dz-message" data-dz-message><span>Click or drop audio here to upload</span></div>
+                <button id="submit-all" class="btn btn-primary btn-lg">Submit file</button>
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -26,12 +19,12 @@
                     url: '/upload',
                     acceptedFiles: ".mp3,.wav,.mp4,.flac,.webm,.ogg,.m4a,.aac",
                     uploadMultiple: false,
-                    autoProcessQueue: true,
+                    autoProcessQueue: false,
                     parallelUploads: 3,
                     maxFilesize: 1000,
                 });
-                myDropzone.on("addedfile", function(file) {
-                      file.previewElement.addEventListener("click", function() { myDropzone.removeFile(file); });
+                $('#submit-all').on('click', function(){
+                    myDropzone.processQueue();
                 });
             });
         </script>
