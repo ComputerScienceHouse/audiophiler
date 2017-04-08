@@ -24,10 +24,14 @@
             $(function() {
                 var myDropzone = new Dropzone('div#fileUpload', {
                     url: '/upload',
+                    acceptedFiles: ".mp3,.wav,.mp4,.flac,.webm,.ogg,.m4a,.aac",
                     uploadMultiple: false,
                     autoProcessQueue: true,
                     parallelUploads: 3,
-                    maxFilesize: 1000, // This is pretty large but it's okay
+                    maxFilesize: 1000,
+                });
+                myDropzone.on("addedfile", function(file) {
+                      file.previewElement.addEventListener("click", function() { myDropzone.removeFile(file); });
                 });
             });
         </script>
