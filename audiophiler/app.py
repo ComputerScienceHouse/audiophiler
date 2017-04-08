@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import Response
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import os, sys
@@ -32,10 +33,9 @@ def upload():
 
 @app.route("/uploads/<path:filename>")
 def get_file(filename):
-    root_dir = os.path.dirname(os.getcwd())
     s3 = get_resource()
-    s3.meta.client.download_file(BUCKET_NAME, filename, os.path.join(root_dir, "/temp/", filename))
-    return send_from_directory(os.path.join(root_dir, "/temp/"), filename)
+    s3_response = s3.Object(BUCKET_NAME, filename)
+    return Response(s3_response.get()['Body'].read(amt=512))
 
 
 def get_resource():
