@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import Response
 from flask import send_from_directory
+from botocore.client import Config
 from werkzeug.utils import secure_filename
 import boto3
 import host         # host.py file containing s3 url
@@ -33,9 +34,7 @@ def upload():
 
 def get_file(filename):
     s3_client = get_resource().meta.client
-    ret = s3_client.generate_presigned_url("get_object", Params = {"Bucket" : BUCKET_NAME, "Key" : filename}, ExpiresIn = 100)
-    print(ret)
-    return ret
+    return s3_client.generate_presigned_url("get_object", Params = {"Bucket" : BUCKET_NAME, "Key" : filename}, ExpiresIn = 100)
 
 
 def get_bucket():
@@ -43,7 +42,7 @@ def get_bucket():
 
 
 def get_resource():
-    return boto3.resource(service_name="s3", endpoint_url=host.s3_url)
+    return boto3.resource(service_name="s3", endpoint_url=host.s3_url, config=Config(signature_version="s3v4"))
 
 
 
