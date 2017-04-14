@@ -31,16 +31,19 @@ def upload():
     return render_template("upload.html")
 
 
-@app.route("/uploads/<path:filename>")
 def get_file(filename):
-    s3 = get_resource()
-    s3_response = s3.Object(BUCKET_NAME, filename)
-    return Response(s3_response.get()['Body'].read())
+    s3_client = get_resource().meta.client
+    ret = s3_client.generate_presigned_url("get_object", Params = {"Bucket" : BUCKET_NAME, "Key" : filename}, ExpiresIn = 100)
+    print(ret)
+    return ret
+
+
+def get_bucket():
+    return get_resource().Bucket(BUCKET_NAME)
 
 
 def get_resource():
     return boto3.resource(service_name="s3", endpoint_url=host.s3_url)
 
 
-def get_bucket():
-    return get_resource().Bucket(BUCKET_NAME)
+

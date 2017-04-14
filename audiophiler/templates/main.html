@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block body %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <div class="container">
         <h2>Welcome to Audiophiler</h2>
         {% for s3_file in s3_files %}
@@ -8,7 +7,7 @@
                 <div class="panel-heading"></div>
                 <div class="panel-body">
                     <h4>{{s3_file.key|e}}</h4>
-                    <audio controls="controls" preload="none" id="audio" src={{"/uploads/" + s3_file.key}} type="audio/mpeg">
+                    <audio controls="controls" preload="none" id="audio" src={{get_file(s3_file.key)}} type="audio/mpeg">
                     </audio>
                 </div>
             </div>
