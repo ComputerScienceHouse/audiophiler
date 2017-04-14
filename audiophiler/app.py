@@ -4,10 +4,10 @@ from flask import request
 from flask import Response
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
-import os, sys
 import boto3
-import tempfile
 import host         # host.py file containing s3 url
+
+
 app = Flask(__name__)
 
 
