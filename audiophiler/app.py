@@ -1,11 +1,10 @@
 from flask import Flask
 from flask import render_template
 from flask import request
-from botocore.client import Config
 from werkzeug.utils import secure_filename
 import boto
 import boto.s3.connection
-import host         # host.py file containing s3 url
+import creds             # credentials file containg s3 keys and url
 
 
 app = Flask(__name__)
@@ -18,7 +17,8 @@ BUCKET_NAME = "audiophiler"
 def home():
     bucket = get_bucket()
     s3_files = bucket.list()
-    return render_template("main.html", s3_files=s3_files, get_file=get_file)
+    return render_template("main.html", s3_files=s3_files,
+                get_file=get_file, get_date_modified=get_date_modified)
 
 
 @app.route("/upload", methods=["POST", "GET"])
@@ -34,7 +34,11 @@ def upload():
 def get_file(filename):
     bucket = get_bucket()
     key = bucket.get_key(filename)
-    return key.generate_url(360, query_auth=True, force_http=True)
+    return key.generate_url(900, query_auth=True, force_http=True)
+
+
+def get_date_modified(filename):
+    return get_bucket().get_key(filename).last_modified
 
 
 def get_bucket():
@@ -43,10 +47,9 @@ def get_bucket():
 
 def get_conn():
     resource = boto.connect_s3(
-                aws_access_key_id = host.key,
-                aws_secret_access_key = host.secret,
-                host = host.s3_url,
+                aws_access_key_id = creds.key,
+                aws_secret_access_key = creds.secret,
+                host = creds.s3_url,
                 calling_format = boto.s3.connection.OrdinaryCallingFormat(),
                 )
     return resource
-
