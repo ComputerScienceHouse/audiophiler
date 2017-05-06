@@ -1,8 +1,6 @@
 from flask import Flask
 from flask import render_template
 from flask import request
-from flask import Response
-from flask import send_from_directory
 from botocore.client import Config
 from werkzeug.utils import secure_filename
 import boto3
@@ -42,7 +40,6 @@ def get_bucket():
 
 
 def get_resource():
-    return boto3.resource(service_name="s3", endpoint_url=host.s3_url, config=Config(signature_version="s3v4"))
-
-
+    return boto3.resource(service_name="s3", endpoint_url=host.s3_url,
+        config=Config(signature_version="s3v4"))
 
