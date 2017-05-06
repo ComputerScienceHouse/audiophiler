@@ -3,7 +3,8 @@ from flask import render_template
 from flask import request
 from botocore.client import Config
 from werkzeug.utils import secure_filename
-import boto3
+import boto
+import boto.s3.connection
 import host         # host.py file containing s3 url
 
 
@@ -15,9 +16,8 @@ BUCKET_NAME = "audiophiler"
 
 @app.route("/", methods=["POST", "GET"])
 def home():
-    s3 = get_resource()
     bucket = get_bucket()
-    s3_files = bucket.objects.all()
+    s3_files = bucket.list()
     return render_template("main.html", s3_files=s3_files, get_file=get_file)
 
 
@@ -26,20 +26,27 @@ def upload():
     if request.method == 'POST':
         f = request.files['file']
         bucket = get_bucket()
-        bucket.put_object(Key=secure_filename(f.filename), Body=f)
+        key = bucket.new_key(secure_filename(f.filename))
+        key.set_contents_from_from_file(f)
     return render_template("upload.html")
 
 
 def get_file(filename):
-    s3_client = get_resource().meta.client
-    return s3_client.generate_presigned_url("get_object", Params = {"Bucket" : BUCKET_NAME, "Key" : filename}, ExpiresIn = 100)
+    bucket = get_bucket()
+    key = bucket.get_key(filename)
+    return key.generate_url(360, query_auth=True, force_http=True)
 
 
 def get_bucket():
-    return get_resource().Bucket(BUCKET_NAME)
+    return get_conn().get_bucket(BUCKET_NAME);
 
 
-def get_resource():
-    return boto3.resource(service_name="s3", endpoint_url=host.s3_url,
-        config=Config(signature_version="s3v4"))
+def get_conn():
+    resource = boto.connect_s3(
+                aws_access_key_id = host.key,
+                aws_secret_access_key = host.secret,
+                host = host.s3_url,
+                calling_format = boto.s3.connection.OrdinaryCallingFormat(),
+                )
+    return resource
 
