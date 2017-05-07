@@ -27,7 +27,7 @@ def upload():
         f = request.files['file']
         bucket = get_bucket()
         key = bucket.new_key(secure_filename(f.filename))
-        key.set_contents_from_from_file(f)
+        key.set_contents_from_file(f)
     return render_template("upload.html")
 
 
