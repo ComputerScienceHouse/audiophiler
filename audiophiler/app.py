@@ -26,6 +26,11 @@ def upload():
     if request.method == 'POST':
         f = request.files['file']
         bucket = get_bucket()
+        # TODO
+        # check for duplicate file names
+        # Associated file name with connected user
+
+        # Upload the file to the bucket (key is sanitized filename)
         key = bucket.new_key(secure_filename(f.filename))
         key.set_contents_from_file(f)
     return render_template("upload.html")
