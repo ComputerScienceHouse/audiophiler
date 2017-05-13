@@ -38,6 +38,13 @@ def upload():
         f = request.files['file']
         # Sanitize file name
         filename = secure_filename(f.filename)
+        # Break out of function if file already exists
+        # TODO
+        # Return error status to user
+        for fname in get_file_list(BUCKET_NAME):
+            if filename == fname.key:
+                return render_template("upload.html")
+        # Check if filename already exists in the bucket
         # Hash the file contents
         file_hash = hashlib.md5(f.read()).hexdigest()
         f.seek(0) # Reset file pointer to avoid EOF

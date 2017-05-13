@@ -13,6 +13,7 @@ def get_file(bucket_name, filename):
     key = bucket.get_key(filename)
     return key.generate_url(900, query_auth=True, force_http=True)
 
+
 def get_file_list(bucket_name):
     bucket = get_bucket(bucket_name)
     return bucket.list()
@@ -34,5 +35,3 @@ def get_resource():
                 calling_format = boto.s3.connection.OrdinaryCallingFormat(),
                 )
     return resource
-
-
