@@ -1,14 +1,19 @@
 # File: __init__.py
 # Audiophiler main flask functions
-# @author: Stephen Greene (sgreene57)
+# @author: Stephen Greene (sgreene570)
 
 
+import hashlib
 from flask import Flask
 from flask import render_template
 from flask import request
 from werkzeug.utils import secure_filename
-import hashlib
-import s3       #s3.py file for s3 API calls
+
+
+from audiophiler.s3 import get_file
+from audiophiler.s3 import get_file_list
+from audiophiler.s3 import get_date_modified
+from audiophiler.s3 import get_bucket
 
 
 app = Flask(__name__)
@@ -19,10 +24,11 @@ BUCKET_NAME = "audiophiler"
 
 @app.route("/", methods=["POST", "GET"])
 def home():
-    bucket = get_bucket(bucket_name)
-    s3_files = get_file_list(bucket_name)
+    bucket = get_bucket(BUCKET_NAME)
+    s3_files = get_file_list(BUCKET_NAME)
     return render_template("main.html", s3_files=s3_files,
-                get_file=get_file, get_date_modified=get_date_modified)
+                get_file=get_file, get_date_modified=get_date_modified,
+                bucket_name=BUCKET_NAME)
 
 
 @app.route("/upload", methods=["POST", "GET"])
