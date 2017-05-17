@@ -47,7 +47,8 @@ def upload():
         # Check if filename already exists in the bucket
         # Hash the file contents
         file_hash = hashlib.md5(f.read()).hexdigest()
-        f.seek(0) # Reset file pointer to avoid EOF
+        # Reset file pointer to avoid EOF
+        f.seek(0)
         # Check file hash against list of file hashes in db
         # Upload the file tot he bucket
         bucket = get_bucket(BUCKET_NAME)

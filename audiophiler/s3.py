@@ -11,6 +11,9 @@ import audiophiler.creds
 def get_file(bucket_name, filename):
     bucket = get_bucket(bucket_name)
     key = bucket.get_key(filename)
+    # Generates presigned URL that lasts for 900 seconds (15 minutes)
+    # If streaming begins prior to the time cutoff, s3 will allow
+    # for the streaming to continue, uninterrupted.
     return key.generate_url(900, query_auth=True, force_http=True)
 
 
