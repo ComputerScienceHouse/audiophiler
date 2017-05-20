@@ -44,13 +44,13 @@ def upload():
         for fname in get_file_list(BUCKET_NAME):
             if filename == fname.key:
                 return render_template("upload.html")
-        # Check if filename already exists in the bucket
-        # Hash the file contents
+        # Hash the file contents (read file in ram)
         file_hash = hashlib.md5(f.read()).hexdigest()
         # Reset file pointer to avoid EOF
         f.seek(0)
+        # TODO
         # Check file hash against list of file hashes in db
-        # Upload the file tot he bucket
+        # Upload the file to the bucket
         bucket = get_bucket(BUCKET_NAME)
         key = bucket.new_key(filename)
         key.set_contents_from_file(f)

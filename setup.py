@@ -12,5 +12,6 @@ setup(
         'flask',
         'boto',
         'werkzeug',
+        'flask-pyoidc',
     ],
 )
