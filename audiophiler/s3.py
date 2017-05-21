@@ -5,7 +5,6 @@
 
 import boto
 import boto.s3.connection
-import audiophiler.creds
 
 
 def get_file(bucket_name, filename):
@@ -32,9 +31,9 @@ def get_bucket(bucket_name):
 
 def get_resource():
     resource = boto.connect_s3(
-                aws_access_key_id = audiophiler.creds.key,
-                aws_secret_access_key = audiophiler.creds.secret,
-                host = audiophiler.creds.s3_url,
+                aws_access_key_id = S3_KEY,
+                aws_secret_access_key = S3_SECRET,
+                host = S3_URL,
                 calling_format = boto.s3.connection.OrdinaryCallingFormat(),
                 )
     return resource
