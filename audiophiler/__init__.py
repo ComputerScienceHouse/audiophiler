@@ -5,10 +5,10 @@
 
 import hashlib
 import os
+from werkzeug.utils import secure_filename
 from flask import Flask
 from flask import render_template
 from flask import request
-from werkzeug.utils import secure_filename
 
 
 from audiophiler.s3 import get_file
@@ -18,19 +18,13 @@ from audiophiler.s3 import get_bucket
 
 
 app = Flask(__name__)
-
-
-if os.path.exists(os.path.join(os.getcwd(), "config.py")):
-    app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
-
+app.config.from_pyfile("config.py")
 
 BUCKET_NAME = "audiophiler"
 
 
 @app.route("/", methods=["POST", "GET"])
 def home():
-
-    print(os.getcwd())
     bucket = get_bucket(BUCKET_NAME)
     s3_files = get_file_list(BUCKET_NAME)
     return render_template("main.html", s3_files=s3_files,
