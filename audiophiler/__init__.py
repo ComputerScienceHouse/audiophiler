@@ -18,18 +18,19 @@ from audiophiler.s3 import get_bucket
 
 
 app = Flask(__name__)
-app.config.from_pyfile("config.py")
+pp.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
-BUCKET_NAME = "audiophiler"
+
+s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
+                app.config["S3_SECRET"], app.config["BUCKET_NAME"])
 
 
 @app.route("/", methods=["POST", "GET"])
 def home():
-    bucket = get_bucket(BUCKET_NAME)
-    s3_files = get_file_list(BUCKET_NAME)
+    s3_files = get_file_list(s3_bucket)
     return render_template("main.html", s3_files=s3_files,
                 get_file=get_file, get_date_modified=get_date_modified,
-                bucket_name=BUCKET_NAME)
+                s3_bucket=s3_bucket)
 
 
 @app.route("/upload", methods=["POST", "GET"])
@@ -52,7 +53,6 @@ def upload():
         # TODO
         # Check file hash against list of file hashes in db
         # Upload the file to the bucket
-        bucket = get_bucket(BUCKET_NAME)
-        key = bucket.new_key(filename)
+        key = s3_bucket.new_key(filename)
         key.set_contents_from_file(f)
     return render_template("upload.html")

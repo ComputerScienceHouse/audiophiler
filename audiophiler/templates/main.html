@@ -7,9 +7,9 @@
                 <div class="panel-heading"></div>
                 <div class="panel-body">
                     <h4>{{s3_file.key|e}}</h4>
-                    <audio controls="controls" preload="none" id="audio" src={{get_file(bucket_name, s3_file.key)}} type="audio/mpeg">
+                    <audio controls="controls" preload="none" id="audio" src={{get_file(s3_bucket, s3_file.key)}} type="audio/mpeg">
                     </audio>
-                    Last modified: {{get_date_modified(bucket_name, s3_file)}}
+                    Last modified: {{get_date_modified(s3_bucket, s3_file)}}
                 </div>
             </div>
         {% endfor %}

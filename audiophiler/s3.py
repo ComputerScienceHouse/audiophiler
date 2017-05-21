@@ -7,8 +7,7 @@ import boto
 import boto.s3.connection
 
 
-def get_file(bucket_name, filename):
-    bucket = get_bucket(bucket_name)
+def get_file(bucket, filename):
     key = bucket.get_key(filename)
     # Generates presigned URL that lasts for 900 seconds (15 minutes)
     # If streaming begins prior to the time cutoff, s3 will allow
@@ -16,24 +15,23 @@ def get_file(bucket_name, filename):
     return key.generate_url(900, query_auth=True, force_http=True)
 
 
-def get_file_list(bucket_name):
-    bucket = get_bucket(bucket_name)
+def get_file_list(bucket):
+    # List all files in the bucket
     return bucket.list()
 
 
-def get_date_modified(bucket_name, filename):
-    return get_bucket(bucket_name).get_key(filename).last_modified
+def get_date_modified(bucket, filename):
+    # Get date modified for a specific file in the bucket
+    return bucket.get_key(filename).last_modified
 
 
-def get_bucket(bucket_name):
-    return get_resource().get_bucket(bucket_name);
-
-
-def get_resource():
-    resource = boto.connect_s3(
-                aws_access_key_id = app.config["S3_KEY"],
-                aws_secret_access_key = app.config["S3_SECRET"],
-                host = app.config["S3_URL"],
+def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
+    # Establish s3 connection through boto
+    conn = boto.connect_s3(
+                aws_access_key_id = s3_key,
+                aws_secret_access_key = s3_secret,
+                host = s3_url,
                 calling_format = boto.s3.connection.OrdinaryCallingFormat(),
                 )
-    return resource
+    # Return the bucket rather than the entire resource
+    return conn.get_bucket(bucket_name)
