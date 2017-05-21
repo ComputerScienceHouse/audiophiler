@@ -18,6 +18,7 @@ from audiophiler.s3 import get_bucket
 
 
 app = Flask(__name__)
+# Get app config from absolute file path
 app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
 
@@ -26,8 +27,8 @@ app.run(host=app.config['IP'], port=app.config['PORT'])
 
 
 # Get s3 bucket for use in functions and templates
-# s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
-                # app.config["S3_SECRET"], app.config["BUCKET_NAME"])
+s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
+                app.config["S3_SECRET"], app.config["BUCKET_NAME"])
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -58,8 +59,10 @@ def upload():
         f.seek(0)
         # TODO
         # Check file hash against list of file hashes in db
-        # Upload the file to the bucket
+
+        # Instantiate file key in bucket
         key = s3_bucket.new_key(filename)
+        # Upload the file to the bucket
         key.set_contents_from_file(f)
     return render_template("upload.html")
 
