@@ -17,4 +17,4 @@ or
 <br>
 <code>flask run</code>
 <br>
-See the example <code>config.sample.py</code> to add any necessary flask options.
+See the example <code>config.sample.py</code> to add any necessary runtime variables.

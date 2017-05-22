@@ -22,10 +22,6 @@ app = Flask(__name__)
 app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
 
-# Run app with IP:PORT from config
-app.run(host=app.config['IP'], port=app.config['PORT'])
-
-
 # Get s3 bucket for use in functions and templates
 s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
                 app.config["S3_SECRET"], app.config["BUCKET_NAME"])
@@ -42,9 +38,9 @@ def home():
 
 @app.route("/upload", methods=["POST", "GET"])
 def upload():
-    if request.method == 'POST':
+    if request.method == "POST":
         # Get file from upload form
-        f = request.files['file']
+        f = request.files["file"]
         # Sanitize file name
         filename = secure_filename(f.filename)
         # Break out of function if file already exists
@@ -65,5 +61,6 @@ def upload():
         # Upload the file to the bucket
         key.set_contents_from_file(f)
     return render_template("upload.html")
+
 
 
