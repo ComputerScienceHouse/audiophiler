@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 
 
 from audiophiler.s3 import get_file
@@ -22,21 +23,30 @@ app = Flask(__name__)
 app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
 
+auth = OIDCAuthentication(app,
+                          issuer = app.config["OIDC_ISSUER"],
+                          client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+
+
 # Get s3 bucket for use in functions and templates
 s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
                 app.config["S3_SECRET"], app.config["BUCKET_NAME"])
 
 
 @app.route("/", methods=["POST", "GET"])
+@auth.oidc_auth
+@audiophiler_auth
 def home():
     # Retrieve list of files for templating
     s3_files = get_file_list(s3_bucket)
     return render_template("main.html", s3_files=s3_files,
                 get_file=get_file, get_date_modified=get_date_modified,
-                s3_bucket=s3_bucket)
+                s3_bucket=s3_bucket, uid=auth_dict["uid"])
 
 
 @app.route("/upload", methods=["POST", "GET"])
+@auth.oidc_auth
+@audiophiler_auth
 def upload():
     if request.method == "POST":
         # Get file from upload form
@@ -60,7 +70,13 @@ def upload():
         key = s3_bucket.new_key(filename)
         # Upload the file to the bucket
         key.set_contents_from_file(f)
-    return render_template("upload.html")
+    return render_template("upload.html", uid=auth_dict["uid"])
+
+
+@app.route("/logout")
+@auth.oidc_logout
+def logout():
+    return redirect(url_for('index'), 302)
 
 
 
