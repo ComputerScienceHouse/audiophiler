@@ -18,3 +18,6 @@ or
 <code>flask run</code>
 <br>
 See the example <code>config.sample.py</code> to add any necessary runtime variables.
+<br>
+<code>config.py</code> should be placed in the same directory as <code>\_\_init.py\_\_</code> 
+(the runtime directory).

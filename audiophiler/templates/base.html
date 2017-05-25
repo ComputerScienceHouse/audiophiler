@@ -25,10 +25,16 @@
             <li class="dropdown navbar-user">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                 role="button" aria-expanded="false">
-                    <img src="https://www.csh.rit.edu/resources/images/projects/harold.jpg">{{uid}}</img>
+                    <img src="https://profiles.csh.rit.edu/image/{{ auth_dict["uid"] }}"> {{ auth_dict["uid"] }}</img>
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a href="https://profiles.csh.rit.edu/user/{{ auth_dict["uid"] }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    </li>
+                    <li>
+                        <a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe"></span> Members Portal</a></li>
+                    </li>
                     <li>
                         <a href="/logout">
                         Logout

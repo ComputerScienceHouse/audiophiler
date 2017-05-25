@@ -41,7 +41,7 @@ def home():
     s3_files = get_file_list(s3_bucket)
     return render_template("main.html", s3_files=s3_files,
                 get_file=get_file, get_date_modified=get_date_modified,
-                s3_bucket=s3_bucket, uid=auth_dict["uid"])
+                s3_bucket=s3_bucket, auth_dict=auth_dict)
 
 
 @app.route("/upload", methods=["POST", "GET"])
@@ -53,30 +53,30 @@ def upload():
         f = request.files["file"]
         # Sanitize file name
         filename = secure_filename(f.filename)
-        # Break out of function if file already exists
+        # Iterate through file list and stop upload if file name already exists
         # TODO
         # Return error status to user
         for fname in get_file_list(BUCKET_NAME):
             if filename == fname.key:
-                return render_template("upload.html")
+                # Return to refresh the upload page and stop the upload process
+                return render_template("upload.html", auth_dict=auth_dict)
         # Hash the file contents (read file in ram)
+        # File contents cannot be read in chunks (this is a flaw in boto file objects)
         file_hash = hashlib.md5(f.read()).hexdigest()
         # Reset file pointer to avoid EOF
         f.seek(0)
         # TODO
         # Check file hash against list of file hashes in db
 
-        # Instantiate file key in bucket
-        key = s3_bucket.new_key(filename)
         # Upload the file to the bucket
-        key.set_contents_from_file(f)
-    return render_template("upload.html", uid=auth_dict["uid"])
+        upload_file(s3_bucket, filename, f)
+    return render_template("upload.html", auth_dict=auth_dict)
 
 
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
-    return redirect(url_for('index'), 302)
+    return redirect("/", 302)
 
 
 

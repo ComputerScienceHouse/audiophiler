@@ -25,6 +25,13 @@ def get_date_modified(bucket, filename):
     return bucket.get_key(filename).last_modified
 
 
+def upload_file(bucket, filename, f):
+    # Create bucket key with filename
+    key = bucket.new_key(filename)
+    # Upload the file
+    key.set_contents_from_file(f)
+
+
 def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
     # Establish s3 connection through boto
     conn = boto.connect_s3(
