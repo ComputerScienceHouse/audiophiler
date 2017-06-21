@@ -32,6 +32,10 @@ def upload_file(bucket, filename, f):
     key.set_contents_from_file(f)
 
 
+def remove_file(bucket, filename):
+    bucket.delete_key(filename)
+
+
 def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
     # Establish s3 connection through boto
     conn = boto.connect_s3(
