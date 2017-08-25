@@ -4,3 +4,5 @@ werkzeug
 flask-pyoidc
 boto
 gunicorn
+flask_sqlalchemy
+flask_migrate

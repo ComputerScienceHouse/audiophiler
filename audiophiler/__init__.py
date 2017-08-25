@@ -5,19 +5,21 @@
 
 import hashlib
 import os
-from werkzeug.utils import secure_filename
+import flask_migrate
 from flask import Flask
 from flask import render_template
 from flask import request
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 
 
 from audiophiler.s3 import get_file
 from audiophiler.s3 import get_file_list
 from audiophiler.s3 import get_date_modified
 from audiophiler.s3 import get_bucket
-
 from audiophiler.util import audiophiler_auth
+
 
 app = Flask(__name__)
 # Get app config from absolute file path
@@ -35,6 +37,11 @@ auth = OIDCAuthentication(app,
 # Get s3 bucket for use in functions and templates
 s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
                 app.config["S3_SECRET"], app.config["BUCKET_NAME"])
+
+
+# Database setup
+db = SQLAlchemy(app)
+migrate = flask_migrate.Migrate(app, db)
 
 
 @app.route("/")
