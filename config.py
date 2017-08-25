@@ -1,4 +1,7 @@
 import os
+import random
+import string
+
 S3_URL = os.getenv("S3_URL", default="s3.csh.rit.edu")
 S3_KEY = os.getenv("S3_KEY", default=None)
 S3_SECRET = os.getenv("S3_SECRET", default=None)
@@ -12,3 +15,6 @@ OIDC_CLIENT_CONFIG = {
     "client_secret": os.getenv("OIDC_CLIENT_SECRET", default=None),
     "post_logout_redirect_uris": [os.getenv("OIDC_LOGOUT_REDIRECT_URI", default="https://audiophiler.csh.rit.edu/logout")]
 }
+
+SECRET_KEY = os.getenv("SECRET_KEY", default=''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(64)))
+
