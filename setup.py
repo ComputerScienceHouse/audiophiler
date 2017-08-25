@@ -5,13 +5,6 @@
 
 from setuptools import setup
 setup(
-    name="audiophiler",
-    packages=["audiophiler"],
-    include_package_data=True,
-    install_requires=[
-        'flask',
-        'boto',
-        'werkzeug',
-        'flask-pyoidc',
-    ],
+    setup_requires=["pbr"],
+    pbr=True,
 )

@@ -6,14 +6,14 @@
 
 
 from flask import session
+from functools import wraps
 
 
 def audiophiler_auth(func):
     @wraps(func)
-    def wrapped function(*args, **kwargs):
+    def wrapped_function(*args, **kwargs):
         uuid = str(session["userinfo"].get("sub", ""))
         uid = str(session["userinfo"].get("preferred_username", ""))
-
         auth_dict["uuid"] = uuid
         auth_dict["uid"] = uid
         return func(*args, **kwargs)

@@ -17,15 +17,19 @@ from audiophiler.s3 import get_file_list
 from audiophiler.s3 import get_date_modified
 from audiophiler.s3 import get_bucket
 
+from audiophiler.util import audiophiler_auth
 
 app = Flask(__name__)
 # Get app config from absolute file path
-app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
+if os.path.exists(os.path.join(os.getcwd(), "config.py")):
+    app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
+else:
+    app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
 
 auth = OIDCAuthentication(app,
                           issuer = app.config["OIDC_ISSUER"],
-                          client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+                          client_registration_info = app.config["OIDC_CLIENT_CONFIG"])
 
 
 # Get s3 bucket for use in functions and templates
@@ -33,7 +37,7 @@ s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
                 app.config["S3_SECRET"], app.config["BUCKET_NAME"])
 
 
-@app.route("/", methods=["POST", "GET"])
+@app.route("/")
 @auth.oidc_auth
 @audiophiler_auth
 def home():
@@ -44,7 +48,7 @@ def home():
                 s3_bucket=s3_bucket, auth_dict=auth_dict)
 
 
-@app.route("/upload", methods=["POST", "GET"])
+@app.route("/upload")
 @auth.oidc_auth
 @audiophiler_auth
 def upload():
@@ -57,7 +61,7 @@ def upload():
         # TODO
         # Return error status to user
         for fname in get_file_list(BUCKET_NAME):
-            if filename == fname.key:
+            if filename == fname.ke:
                 # Return to refresh the upload page and stop the upload process
                 return render_template("upload.html", auth_dict=auth_dict)
         # Hash the file contents (read file in ram)
@@ -77,6 +81,4 @@ def upload():
 @auth.oidc_logout
 def logout():
     return redirect("/", 302)
-
-
 

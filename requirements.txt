@@ -1,0 +1,6 @@
+pbr
+flask
+werkzeug
+flask-pyoidc
+boto
+gunicorn
