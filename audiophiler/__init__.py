@@ -40,7 +40,7 @@ s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
 @app.route("/")
 @auth.oidc_auth
 @audiophiler_auth
-def home():
+def home(auth_dict=None):
     # Retrieve list of files for templating
     s3_files = get_file_list(s3_bucket)
     return render_template("main.html", s3_files=s3_files,
@@ -51,7 +51,7 @@ def home():
 @app.route("/upload")
 @auth.oidc_auth
 @audiophiler_auth
-def upload():
+def upload(auth_dict=None):
     if request.method == "POST":
         # Get file from upload form
         f = request.files["file"]

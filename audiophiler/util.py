@@ -14,7 +14,10 @@ def audiophiler_auth(func):
     def wrapped_function(*args, **kwargs):
         uuid = str(session["userinfo"].get("sub", ""))
         uid = str(session["userinfo"].get("preferred_username", ""))
-        auth_dict["uuid"] = uuid
-        auth_dict["uid"] = uid
+        auth_dict = {
+            "uuid": uuid,
+            "uid": uid
+        }
+        kwargs["auth_dict"] = auth_dict
         return func(*args, **kwargs)
     return wrapped_function
