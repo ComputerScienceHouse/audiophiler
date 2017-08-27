@@ -6,7 +6,7 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
-from sqlalchemy import text
+from sqlalchemy import Text
 
 
 from audiophiler import db
@@ -15,17 +15,13 @@ from audiophiler import db
 class File(db.Model):
     __tablename__ = "files"
     id = Column(Integer, primary_key=True)
-    parent = Column(ForeignKey("files.id"), nullable=False)
     name = Column(Text, nullable=False)
     author = Column(Text, nullable=False)
-    url = Column(Text, nullable=False)
     file_hash = Column(Text, nullable=False)
 
-    def __init__(self, parent, name, author, url, file_hash):
-        self.parent = parent
+    def __init__(self, name, author, file_hash):
         self.name = name
         self.author = author
-        self.url = url
         self.file_hash = file_hash
 
 

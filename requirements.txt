@@ -6,3 +6,4 @@ boto
 gunicorn
 flask_sqlalchemy
 flask_migrate
+psycopg2

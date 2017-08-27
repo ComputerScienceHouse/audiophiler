@@ -7,7 +7,7 @@ import boto
 import boto.s3.connection
 
 
-def get_file(bucket, filename):
+def get_file_s3(bucket, filename):
     key = bucket.get_key(filename)
     # Generates presigned URL that lasts for 900 seconds (15 minutes)
     # If streaming begins prior to the time cutoff, s3 will allow
