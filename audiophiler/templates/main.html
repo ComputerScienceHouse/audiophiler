@@ -11,6 +11,7 @@
                     </audio>
                     Last modified: {{ get_date_modified(s3_bucket, file.name) }}
                     Owner: {{ file.author }}
+                    Hash: {{ file.hash }}
                 </div>
             </div>
         {% endfor %}

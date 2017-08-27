@@ -66,39 +66,43 @@ def home(auth_dict=None):
                 s3_bucket=s3_bucket, auth_dict=auth_dict)
 
 
-@app.route("/upload")
+@app.route("/upload", methods=["GET"])
+@auth.oidc_auth
+@audiophiler_auth
+def upload_page(auth_dict=None):
+    return render_template("upload.html", auth_dict=auth_dict)
+
+
+@app.route("/upload", methods=["POST"])
 @auth.oidc_auth
 @audiophiler_auth
 def upload(auth_dict=None):
-    if request.method == "POST":
-        # Get file from upload form
-        f = request.files["file"]
-
+    print("Post received")
+    files = request.files.getlist("file[]")
+    print(files)
+    for f in files:
         # Sanitize file name
         filename = secure_filename(f.filename)
-
-        # Iterate through file list and stop upload if file name already exists
-        # TODO
-        # Return error status to user
-        for fname in get_file_list(BUCKET_NAME):
-            if filename == fname.ke:
-                # Return to refresh the upload page and stop the upload process
-                return render_template("upload.html", auth_dict=auth_dict)
 
         # Hash the file contents (read file in ram)
         # File contents cannot be read in chunks (this is a flaw in boto file objects)
         file_hash = hashlib.md5(f.read()).hexdigest()
+        print(file_hash)
         # Reset file pointer to avoid EOF
         f.seek(0)
 
+        # Check if file hash is the same as any files already in the db
+        for db_file in File.query.all():
+            if file_hash == db_file.file_hash:
+                return render_template("upload.html", auth_dict=auth_dict)
+
         # Add file info to db
         file_model = File(filename, auth_dict["uid"], file_hash)
-        upload_file(s3_bucket, filename, f)
+        upload_file(s3_bucket, file_hash, f)
         db.session.add(file_model)
         db.session.flush()
         db.session.commit()
         db.session.refresh(file_model)
-
     return render_template("upload.html", auth_dict=auth_dict)
 
 

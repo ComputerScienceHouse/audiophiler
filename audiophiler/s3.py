@@ -25,9 +25,9 @@ def get_date_modified(bucket, filename):
     return bucket.get_key(filename).last_modified
 
 
-def upload_file(bucket, filename, f):
+def upload_file(bucket, file_hash, f):
     # Create bucket key with filename
-    key = bucket.new_key(filename)
+    key = bucket.new_key(file_hash)
     # Upload the file
     key.set_contents_from_file(f)
 
