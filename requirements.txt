@@ -7,3 +7,4 @@ gunicorn
 flask_sqlalchemy
 flask_migrate
 psycopg2
+requests

@@ -6,6 +6,7 @@
 import hashlib
 import os
 import flask_migrate
+import requests
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -22,7 +23,7 @@ from audiophiler.util import audiophiler_auth
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_NOTIFICATIONS'] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Get app config from absolute file path
 if os.path.exists(os.path.join(os.getcwd(), "config.py")):
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
