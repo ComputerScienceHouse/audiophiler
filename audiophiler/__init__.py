@@ -10,6 +10,7 @@ import requests
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import jsonify
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -19,6 +20,7 @@ from audiophiler.s3 import get_file_s3
 from audiophiler.s3 import get_file_list
 from audiophiler.s3 import get_date_modified
 from audiophiler.s3 import get_bucket
+from audiophiler.s3 import upload_file
 from audiophiler.util import audiophiler_auth
 
 
@@ -77,33 +79,55 @@ def upload_page(auth_dict=None):
 @auth.oidc_auth
 @audiophiler_auth
 def upload(auth_dict=None):
-    print("Post received")
-    files = request.files.getlist("file[]")
-    print(files)
-    for f in files:
+    uploaded_files = [t[1] for t in request.files.items()]
+    upload_status = {}
+    upload_status["error"] = []
+    upload_status["success"] = []
+
+    for f in uploaded_files:
         # Sanitize file name
         filename = secure_filename(f.filename)
 
         # Hash the file contents (read file in ram)
         # File contents cannot be read in chunks (this is a flaw in boto file objects)
         file_hash = hashlib.md5(f.read()).hexdigest()
-        print(file_hash)
         # Reset file pointer to avoid EOF
         f.seek(0)
 
         # Check if file hash is the same as any files already in the db
+        file_exists = False
         for db_file in File.query.all():
             if file_hash == db_file.file_hash:
-                return render_template("upload.html", auth_dict=auth_dict)
+                upload_status["error"].append(filename)
+                file_exists = True
+                break
+
+        if file_exists:
+            break
 
         # Add file info to db
         file_model = File(filename, auth_dict["uid"], file_hash)
+        if file_model is None:
+            upload_status["error"].append(filename)
+            break
+
+        # Upload file to s3
         upload_file(s3_bucket, file_hash, f)
+
+        # Add file_model to DB and flush
         db.session.add(file_model)
         db.session.flush()
         db.session.commit()
         db.session.refresh(file_model)
-    return render_template("upload.html", auth_dict=auth_dict)
+
+        # Set success status info
+        upload_status["success"].append(
+            {
+                "name": file_model.name,
+                "file_hash": file_model.file_hash
+            })
+
+    return jsonify(upload_status)
 
 
 @app.route("/logout")

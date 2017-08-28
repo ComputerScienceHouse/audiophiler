@@ -7,12 +7,12 @@ import boto
 import boto.s3.connection
 
 
-def get_file_s3(bucket, filename):
-    key = bucket.get_key(filename)
+def get_file_s3(bucket, file_hash):
+    key = bucket.get_key(file_hash)
     # Generates presigned URL that lasts for 900 seconds (15 minutes)
     # If streaming begins prior to the time cutoff, s3 will allow
     # for the streaming to continue, uninterrupted.
-    return key.generate_url(900, query_auth=True, force_http=True)
+    return key.generate_url(900, query_auth=True)
 
 
 def get_file_list(bucket):
@@ -20,9 +20,9 @@ def get_file_list(bucket):
     return bucket.list()
 
 
-def get_date_modified(bucket, filename):
+def get_date_modified(bucket, file_hash):
     # Get date modified for a specific file in the bucket
-    return bucket.get_key(filename).last_modified
+    return bucket.get_key(file_hash).last_modified
 
 
 def upload_file(bucket, file_hash, f):
@@ -32,8 +32,8 @@ def upload_file(bucket, file_hash, f):
     key.set_contents_from_file(f)
 
 
-def remove_file(bucket, filename):
-    bucket.delete_key(filename)
+def remove_file(bucket, file_hash):
+    bucket.delete_key(file_hash)
 
 
 def get_bucket(s3_url, s3_key, s3_secret, bucket_name):

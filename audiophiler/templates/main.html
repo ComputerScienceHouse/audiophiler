@@ -7,11 +7,11 @@
                 <div class="panel-heading"></div>
                 <div class="panel-body">
                     <h4>{{ file.name }}</h4>
-                    <audio controls="controls" preload="none" id="audio" src={{ get_file_s3(s3_bucket, file.name) }} type="audio/mpeg">
+                    <audio controls="controls" preload="none" id="audio" src={{ get_file_s3(s3_bucket, file.file_hash) }} type="audio/mpeg">
                     </audio>
-                    Last modified: {{ get_date_modified(s3_bucket, file.name) }}
+                    Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}
                     Owner: {{ file.author }}
-                    Hash: {{ file.hash }}
+                    Hash: {{ file.file_hash }}
                 </div>
             </div>
         {% endfor %}
