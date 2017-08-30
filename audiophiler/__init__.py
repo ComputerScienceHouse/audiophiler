@@ -3,24 +3,14 @@
 # @author: Stephen Greene (sgreene570)
 
 
-import hashlib
-import os
-import flask_migrate
-import requests
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import jsonify
+import hashlib, os, flask_migrate, requests
+from flask import Flask, render_template, request, jsonify
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
 
-from audiophiler.s3 import get_file_s3
-from audiophiler.s3 import get_file_list
-from audiophiler.s3 import get_date_modified
-from audiophiler.s3 import get_bucket
-from audiophiler.s3 import upload_file
+from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file
 from audiophiler.util import audiophiler_auth
 
 
@@ -53,8 +43,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 # Import db models after instantiating db model
-from audiophiler.models import File
-from audiophiler.models import Harold
+from audiophiler.models import File, Harold
 
 
 @app.route("/")

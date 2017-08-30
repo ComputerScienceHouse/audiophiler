@@ -10,20 +10,21 @@
                 <div class="dz-message" data-dz-message><h3>Click or drop audio here to upload</h3></div>
                 <br>
                 <button id="submit-all" class="btn btn-primary btn-lg">Upload file</button>
+                <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
             </div>
         </div>
         <script>
         Dropzone.autoDiscover = false;
             $(function() {
-                var myDropzone = new Dropzone('div#fileUpload', {
-                    url: '/upload',
+                var myDropzone = new Dropzone("div#fileUpload", {
+                    url: "/upload",
                     acceptedFiles: ".mp3,.wav,.mp4,.flac,.webm,.ogg,.m4a,.aac",
                     uploadMultiple: false,
                     autoProcessQueue: false,
                     parallelUploads: 5,
                     maxFilesize: 1000,
                 });
-                $('#submit-all').on('click', function(){
+                $("#submit-all").on("click", function(){
                     myDropzone.processQueue();
                 });
             });
