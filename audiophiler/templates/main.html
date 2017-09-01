@@ -10,10 +10,8 @@
                     <audio controls="controls" preload="none" id="audio" src={{ get_file_s3(s3_bucket, file.file_hash) }} type="audio/mpeg">
                     </audio>
                     <h5>Owner: {{ file.author }}</h5>
-                    <br>
-                    Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}
-                    <br>
-                    Hash: {{ file.file_hash }}
+                    <h6>Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
+                    <h6>Hash: {{ file.file_hash }}</h6>
                 </div>
             </div>
         {% endfor %}

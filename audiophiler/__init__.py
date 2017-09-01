@@ -119,7 +119,28 @@ def upload(auth_dict=None):
     return jsonify(upload_status)
 
 
+@app.route("/delete/<int:file_hash>", methods=["POST"])
+@auth.oidc_auth
+@audiophiler_auth
+def delete_file(file_hash, auth_dict=None):
+    file_hash = int(file_hash)
+    file_model = File.query.fliter(File.file_hash == file_hash).first()
+
+    if file_model is None:
+        return "File Not Found", 404
+
+    if not auth_dict["uid"] == file_model.author:
+        return "Permission Denied", 403
+
+    db.session.delete(file_model)
+    db.session.flush()
+    db.session.commit()
+
+    return "OK go for it", 200
+
+
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
     return redirect("/", 302)
+
