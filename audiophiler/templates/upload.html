@@ -8,6 +8,7 @@
 
         <div id="actions" class="row">
           <div class="col-lg-7">
+          <br>
             <!-- The fileinput-button span is used to style the file input field as button -->
             <span class="btn btn-success fileinput-button">
                 <i class="glyphicon glyphicon-plus"></i>
@@ -68,9 +69,7 @@
                 var previewNode = document.querySelector("#template");
                 previewNode.id = "";
                 var previewTemplate = previewNode.parentNode.innerHTML;
-                previewNode.parentNode.removeChild(previewNode);
-
-                var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+                previewNode.parentNode.removeChild(previewNode); var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
                   url: "/upload", // Set the url
                   thumbnailWidth: 80,
                   thumbnailHeight: 80,

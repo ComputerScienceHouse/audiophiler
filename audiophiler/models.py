@@ -27,10 +27,11 @@ class File(db.Model):
 
 class Harold(db.Model):
     __tablename__ = "harolds"
-    file_id = Column(ForeignKey("files.id"), primary_key=True)
-    owner = Column(Text, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    file_hash = Column(Text, nullable=False)
+    owner = Column(Text, nullable=False)
 
-    def __init__(self, file_id, owner):
-        self.file_id = file_id
+    def __init__(self, file_hash, owner):
+        self.file_hash = file_hash
         self.owner = owner
 

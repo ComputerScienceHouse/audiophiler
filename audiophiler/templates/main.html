@@ -6,12 +6,19 @@
             <div class="panel panel-primary">
                 <div class="panel-heading"></div>
                 <div class="panel-body">
-                    <h4>{{ file.name }}</h4>
+                    <h5>{{ file.name }}</h5>
                     <audio controls="controls" controlsList="nodownload" preload="none" id="audio" src="{{ get_file_s3(s3_bucket, file.file_hash) }}" type="audio/mpeg" download="{{ file.name }}">
                     </audio>
-                    <h5>Owner: {{ file.author }}</h5>
+                    <h6>Owner: {{ file.author }}</h6>
                     <h6>Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
                     <h6>Hash: {{ file.file_hash }}</h6>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                            <input type="checkbox" data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %} class="toggleHarold"> Harold?
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endfor %}

@@ -52,9 +52,10 @@ from audiophiler.models import File, Harold
 def home(auth_dict=None):
     # Retrieve list of files for templating
     db_files = File.query.all()
+    harolds = get_harold_list(auth_dict["uid"])
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
-                s3_bucket=s3_bucket, auth_dict=auth_dict)
+                s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds)
 
 
 @app.route("/upload", methods=["GET"])
@@ -119,7 +120,7 @@ def upload(auth_dict=None):
     return jsonify(upload_status)
 
 
-@app.route("/delete/<int:file_hash>", methods=["POST"])
+@app.route("/delete/<string:file_hash>", methods=["POST"])
 @auth.oidc_auth
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
@@ -137,10 +138,46 @@ def delete_file(file_hash, auth_dict=None):
     db.session.commit()
 
     return "OK go for it", 200
+	
+
+@app.route("/set_harold/<string:file_hash>", methods=["POST"])
+@auth.oidc_auth
+@audiophiler_auth
+def set_harold(file_hash, auth_dict=None):
+    harold_model = Harold(file_hash, auth_dict["uid"])
+    db.session.add(harold_model)
+    db.session.flush()
+    db.session.commit()
+    db.session.refresh(harold_model)
+    return "OK", 200
+
+
+@app.route("/delete_harold/<string:file_hash>", methods=["POST"])
+@auth.oidc_auth
+@audiophiler_auth
+def remove_harold(file_hash, auth_dict=None):
+    harold_model = Harold.query.filter(Harold.file_hash == file_hash).first()
+    if harold_model is None:
+        return "File Not Found", 404
+
+    db.session.delete(harold_model)
+    db.session.flush()
+    db.session.commit()
+
+    return "OK go for it", 200
+
+
+def get_harold_list(uid):
+    harold_list = Harold.query.all()
+    harolds = []
+    for harold in harold_list:
+        if harold.owner == uid:
+            harolds.append(harold.file_hash)
+
+    return harolds
 
 
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
     return redirect("/", 302)
-
