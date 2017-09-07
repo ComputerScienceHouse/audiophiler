@@ -124,7 +124,7 @@ def upload(auth_dict=None):
 @auth.oidc_auth
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
-    file_hash = int(file_hash)
+    file_hash = str(file_hash)
     file_model = File.query.fliter(File.file_hash == file_hash).first()
 
     if file_model is None:
@@ -138,7 +138,7 @@ def delete_file(file_hash, auth_dict=None):
     db.session.commit()
 
     return "OK go for it", 200
-	
+
 
 @app.route("/set_harold/<string:file_hash>", methods=["POST"])
 @auth.oidc_auth

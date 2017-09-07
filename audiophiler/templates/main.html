@@ -17,6 +17,9 @@
                             <label>
                             <input type="checkbox" data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %} class="toggleHarold"> Harold?
                             </label>
+                            {% if file.author == auth_dict["uid"] or is_rtp or is_eboard %}
+                            <button class="glyphicon glyphicon-trash" data-hash={{ file.file_hash }}>Remove?</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

@@ -13,3 +13,12 @@ toggleHarold.click(function () {
     });
     }
 });
+
+const deleteFile = $(".glyphicon-trash");
+deleteFile.click(function () {
+    let hash = this.dataset.hash;
+    fetch("/delete/" + hash, {
+        method: "POST",
+        credentials: "same-origin"
+    });
+});
