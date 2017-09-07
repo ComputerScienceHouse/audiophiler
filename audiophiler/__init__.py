@@ -3,7 +3,7 @@
 # @author: Stephen Greene (sgreene570)
 
 
-import hashlib, os, flask_migrate, requests, subprocess
+import hashlib, os, flask_migrate, requests, subprocess, random
 from flask import Flask, render_template, request, jsonify
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
@@ -137,20 +137,19 @@ def upload(auth_dict=None):
 @auth.oidc_auth
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
-    file_hash = str(file_hash)
     file_model = File.query.filter(File.file_hash == file_hash).first()
 
     if file_model is None:
         return "File Not Found", 404
 
     if not auth_dict["uid"] == file_model.author:
-        return "Permission Denied", 403
-    elif not (ldap_is_eboard(auth_dict["uid"]) or ldap_is_rtp(auth_dict["uid"])):
-        return "Permission Denied", 403
+        if not (ldap_is_eboard(auth_dict["uid"]) or ldap_is_rtp(auth_dict["uid"])):
+            return "Permission Denied", 403
 
     db.session.delete(file_model)
     db.session.flush()
     db.session.commit()
+    remove_harold(file_hash, auth_dict)
 
     return "OK go for it", 200
 
@@ -182,6 +181,14 @@ def remove_harold(file_hash, auth_dict=None):
     return "OK go for it", 200
 
 
+@app.route("/get_harold/<string:uid>", methods=["GET"])
+@auth.oidc_auth
+@audiophiler_auth
+def get_harold(uid, auth_dict=None):
+    harolds = get_harold_list(uid)
+    return get_file_s3(s3_bucket, random.choice(harolds))
+
+
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
@@ -206,6 +213,5 @@ def ldap_is_eboard(uid):
 def ldap_is_rtp(uid):
     rtp_group = ldap.get_group("rtp")
     return rtp_group.check_member(ldap.get_member(uid, uid=True))
-
 
 

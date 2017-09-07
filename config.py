@@ -28,7 +28,7 @@ SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", default=None)
 
 
 # CSH_LDAP credentials
-LDAP_BIND_DN = os.getenv("LDAP_BIND_DN", default="dn=audiophiler,ou=Apps,dc=csh,dc=rit,dc=edu")
+LDAP_BIND_DN = os.getenv("LDAP_BIND_DN", default="cn=audiophiler,ou=Apps,dc=csh,dc=rit,dc=edu")
 LDAP_BIND_PW = os.getenv("LDAP_BIND_PW", default=None)
 
 

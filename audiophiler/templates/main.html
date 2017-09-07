@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <div class="container">
-        <h2>Welcome to Audiophiler</h2>
+        <center><h2>Welcome to Audiophiler</h2></center>
         {% for file in db_files %}
             <div class="panel panel-primary">
                 <div class="panel-heading"></div>
@@ -9,14 +9,14 @@
                     <h5>{{ file.name }}</h5>
                     <audio controls="controls" controlsList="nodownload" preload="none" id="audio" src="{{ get_file_s3(s3_bucket, file.file_hash) }}" type="audio/mpeg" download="{{ file.name }}">
                     </audio>
-                    <h6>Owner: {{ file.author }}</h6>
-                    <h6>Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
-                    <h6>Hash: {{ file.file_hash }}</h6>
+                    <h6>Owner: {{ file.author }}</h6>   Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
                             <input type="checkbox" data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %} class="toggleHarold"> Harold?
                             </label>
+                        </div>
+                        <div class="remove">
                             {% if file.author == auth_dict["uid"] or is_rtp or is_eboard %}
                             <button class="glyphicon glyphicon-trash" data-hash={{ file.file_hash }}>Remove?</button>
                             {% endif %}
