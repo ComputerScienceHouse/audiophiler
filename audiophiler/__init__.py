@@ -3,11 +3,12 @@
 # @author: Stephen Greene (sgreene570)
 
 
-import hashlib, os, flask_migrate, requests
+import hashlib, os, flask_migrate, requests, subprocess
 from flask import Flask, render_template, request, jsonify
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from csh_ldap import CSHLDAP
 
 
 from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file
@@ -23,6 +24,12 @@ else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
 
+app.config["GIT_REVISION"] = subprocess.check_output(['git',
+                                                      'rev-parse',
+                                                      '--short',
+                                                      'HEAD']).decode('utf-8').rstrip()
+
+
 auth = OIDCAuthentication(app,
                           issuer = app.config["OIDC_ISSUER"],
                           client_registration_info = app.config["OIDC_CLIENT_CONFIG"])
@@ -36,6 +43,9 @@ s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
 # Database setup
 db = SQLAlchemy(app)
 migrate = flask_migrate.Migrate(app, db)
+
+ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
+               app.config["LDAP_BIND_PW"])
 
 
 # Disable SSL certificate verification warning
@@ -53,9 +63,12 @@ def home(auth_dict=None):
     # Retrieve list of files for templating
     db_files = File.query.all()
     harolds = get_harold_list(auth_dict["uid"])
+    is_rtp = ldap_is_rtp(auth_dict["uid"])
+    is_eboard = ldap_is_eboard(auth_dict["uid"])
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
-                s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds)
+                s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
+                is_rtp=is_rtp, is_eboard=is_eboard)
 
 
 @app.route("/upload", methods=["GET"])
@@ -125,12 +138,14 @@ def upload(auth_dict=None):
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
     file_hash = str(file_hash)
-    file_model = File.query.fliter(File.file_hash == file_hash).first()
+    file_model = File.query.filter(File.file_hash == file_hash).first()
 
     if file_model is None:
         return "File Not Found", 404
 
     if not auth_dict["uid"] == file_model.author:
+        return "Permission Denied", 403
+    elif not (ldap_is_eboard(auth_dict["uid"]) or ldap_is_rtp(auth_dict["uid"])):
         return "Permission Denied", 403
 
     db.session.delete(file_model)
@@ -167,6 +182,12 @@ def remove_harold(file_hash, auth_dict=None):
     return "OK go for it", 200
 
 
+@app.route("/logout")
+@auth.oidc_logout
+def logout():
+    return redirect("/", 302)
+
+
 def get_harold_list(uid):
     harold_list = Harold.query.all()
     harolds = []
@@ -177,7 +198,14 @@ def get_harold_list(uid):
     return harolds
 
 
-@app.route("/logout")
-@auth.oidc_logout
-def logout():
-    return redirect("/", 302)
+def ldap_is_eboard(uid):
+    eboard_group = ldap.get_group("eboard")
+    return eboard_group.check_member(ldap.get_member(uid, uid=True))
+
+
+def ldap_is_rtp(uid):
+    rtp_group = ldap.get_group("rtp")
+    return rtp_group.check_member(ldap.get_member(uid, uid=True))
+
+
+
