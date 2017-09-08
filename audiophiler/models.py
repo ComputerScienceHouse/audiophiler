@@ -35,3 +35,11 @@ class Harold(db.Model):
         self.file_hash = file_hash
         self.owner = owner
 
+
+class Auth(db.Model):
+    __tablename__ = "auth"
+    id = Column(Integer, primary_key=True)
+    auth_key = Column(Text, nullable=False)
+
+    def __init__(self, auth_key):
+        self.auth_key = auth_key

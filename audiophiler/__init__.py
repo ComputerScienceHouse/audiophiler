@@ -3,7 +3,7 @@
 # @author: Stephen Greene (sgreene570)
 
 
-import hashlib, os, flask_migrate, requests, subprocess, random
+import hashlib, os, flask_migrate, requests, subprocess, random, json
 from flask import Flask, render_template, request, jsonify
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
@@ -181,12 +181,18 @@ def remove_harold(file_hash, auth_dict=None):
     return "OK go for it", 200
 
 
-@app.route("/get_harold/<string:uid>", methods=["GET"])
-@auth.oidc_auth
-@audiophiler_auth
+@app.route("/get_harold/<string:uid>", methods=["GET", "POST"])
 def get_harold(uid, auth_dict=None):
-    harolds = get_harold_list(uid)
-    return get_file_s3(s3_bucket, random.choice(harolds))
+    data = request.data
+    data_dict = json.loads(data)
+    if data_dict["auth_key"]:
+        auth_models = Auth.query.all()
+        for auth in auth_models:
+            if auth.auth_key == data_dict["auth_key"]:
+                harolds = get_harold_list(uid)
+                return get_file_s3(s3_bucket, random.choice(harolds))
+
+    return "Permission denied", 403
 
 
 @app.route("/logout")
