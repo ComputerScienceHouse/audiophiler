@@ -53,7 +53,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 # Import db models after instantiating db model
-from audiophiler.models import File, Harold
+from audiophiler.models import File, Harold, Auth
 
 
 @app.route("/")
@@ -181,10 +181,9 @@ def remove_harold(file_hash, auth_dict=None):
     return "OK go for it", 200
 
 
-@app.route("/get_harold/<string:uid>", methods=["GET", "POST"])
+@app.route("/get_harold/<string:uid>", methods=["POST"])
 def get_harold(uid, auth_dict=None):
-    data = request.data
-    data_dict = json.loads(data)
+    data_dict = request.get_json()
     if data_dict["auth_key"]:
         auth_models = Auth.query.all()
         for auth in auth_models:
