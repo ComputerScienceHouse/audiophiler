@@ -34,3 +34,11 @@ body {
 #previews .file-row.dz-success .delete {
   display: block;
 }
+
+/* CSH Plug Styling */
+.plug-body {
+    text-align: center;
+    margin: auto;
+    max-width: 728px;
+    max-height: 200px;
+}

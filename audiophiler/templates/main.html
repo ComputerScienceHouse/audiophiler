@@ -24,6 +24,21 @@
                     </div>
                 </div>
             </div>
+            {% if config['PLUG_SUPPORT'] and loop.index0 == 0 %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <a href="https://plug.csh.rit.edu">Advertisements by CSH: Plug</a>
+                </div>
+                <div class="panel-body">
+                    <div class="plug-body">
+                        <a href="https://plug.csh.rit.edu">
+                            <img src="https://plug.csh.rit.edu/data">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
