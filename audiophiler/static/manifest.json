@@ -1,0 +1,12 @@
+{
+    "background_color": "#FFF",
+    "description": "s3 audio file storage flask app with templated front end",
+    "dir": "auto",
+    "display": "minimal-ui",
+    "lang": "en",
+    "name": "Audiophiler",
+    "orientation": "any",
+    "short_name": "Audiophiler",
+    "start_url": "/",
+    "theme_color": "#B0197E"
+}
