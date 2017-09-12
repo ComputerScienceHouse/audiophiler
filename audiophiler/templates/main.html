@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                            <input type="checkbox" data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %} class="toggleHarold"> Harold?
+                            <input type="checkbox" data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %} class="toggleHarold"> Toggle Harold
                             </label>
                         </div>
                         <div class="remove">
@@ -27,7 +27,7 @@
             {% if config['PLUG_SUPPORT'] and loop.index0 == 0 %}
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">Advertisements by CSH: Plug</a>
+                    <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug" style="color: #000000">Advertisements by CSH: Plug</a>
                 </div>
                 <div class="panel-body">
                     <div class="plug-body">
