@@ -6,7 +6,15 @@ body {
     .panel.panel-primary {
         margin-left: 40px;
         margin-right: 40px;
-        margin-top: 80px;
+        margin-top: 60px;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .panel.panel-primary {
+        margin-left: 30px;
+        margin-right: 30px;
+        margin-top: 50px;
     }
 }
 
@@ -14,7 +22,7 @@ body {
     .panel.panel-primary {
         margin-left: 20px;
         margin-right: 20px;
-        margin-top: 55px;
+        margin-top: 40px;
     }
 }
 
@@ -22,7 +30,7 @@ body {
     .panel.panel-primary {
         margin-left: 10px;
         margin-right: 10px;
-        margin-top: 35px;
+        margin-top: 30px;
     }
 }
 
@@ -30,6 +38,18 @@ body {
 #total-progress {
   opacity: 0;
   transition: opacity 0.3s linear;
+}
+
+h5.title{
+    word-wrap: break-word;
+}
+
+audio{
+    width: 100%;
+}
+
+div.version{
+    text-align: center;
 }
 
 /* Hide the progress bar when finished */
