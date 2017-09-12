@@ -12,50 +12,59 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+{% block nav %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
+             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a class="navbar-brand" href="/">Audiophiler</a>
         </div>
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="/upload">
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    Upload
-                </a>
-            </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown navbar-user">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                role="button" aria-expanded="false">
-                    <img src="https://profiles.csh.rit.edu/image/{{ auth_dict["uid"] }}" title="{{ auth_dict["uid"] }}">
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li>
-                        <a href="https://profiles.csh.rit.edu/user/{{ auth_dict["uid"] }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    </li>
-                    <li>
-                        <a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe"></span> Members Portal</a></li>
-                    </li>
-                    <li>
-                        <a href="/logout">
-                        Logout
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        {% block nav %}
-        {% endblock %}
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/upload">
+                        <span class="glyphicon glyphicon-th-list"></span>
+                        Upload
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown navbar-user">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    role="button" aria-expanded="false">
+                        <img src="https://profiles.csh.rit.edu/image/{{ auth_dict["uid"] }}" title="{{ auth_dict["uid"] }}">
+                        {{ auth_dict["uid"] }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="https://profiles.csh.rit.edu/user/{{ auth_dict["uid"] }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                        </li>
+                        <li>
+                            <a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe"></span> Members Portal</a></li>
+                        </li>
+                        <li>
+                            <a href="/logout">
+                            Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
+{% endblock %}
     <body>
         {% block body %}
         {% endblock %}
         <footer>
-            <center><a class="footer-version" href="https://github.com/sgreene570/audiophiler"> Audiophiler ({{config["GIT_REVISION"]}})</a></center>
+            <div style="text-align: center;"><a class="footer-version" href="https://github.com/sgreene570/audiophiler"> Audiophiler ({{config["GIT_REVISION"]}})</a></div>
         </footer>
         <script src="/static/js/audiophiler.js"></script>
     </body>

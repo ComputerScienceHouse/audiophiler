@@ -2,10 +2,28 @@ body {
     margin-top: 60px;
 }
 
-.panel.panel-primary {
-    margin-left: 45px;
-    margin-right: 45px;
-    margin-top: 80px;
+@media screen and (max-width: 1680px) {
+    .panel.panel-primary {
+        margin-left: 40px;
+        margin-right: 40px;
+        margin-top: 80px;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    .panel.panel-primary {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 55px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .panel.panel-primary {
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-top: 35px;
+    }
 }
 
 /* The total progress gets shown by event listeners */

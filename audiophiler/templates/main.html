@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <div class="container">
-        <center><h2>Welcome to Audiophiler</h2></center>
+        <div style="text-align: center;"><h2>Welcome to Audiophiler</h2></div>
         {% for file in db_files %}
             <div class="panel panel-primary">
                 <div class="panel-heading"></div>
@@ -32,7 +32,7 @@
                 <div class="panel-body">
                     <div class="plug-body">
                         <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
-                            <img src="https://plug.csh.rit.edu/data">
+                            <img style="width: 100%" src="https://plug.csh.rit.edu/data">
                         </a>
                     </div>
                 </div>
