@@ -71,6 +71,19 @@ def home(auth_dict=None):
                 is_rtp=is_rtp, is_eboard=is_eboard)
 
 
+@app.route("/mine")
+@auth.oidc_auth
+@audiophiler_auth
+def mine(auth_dict=None):
+    # Retrieve list of files for templating
+    db_files = File.query.filter_by(author=auth_dict["uid"]).all()
+    harolds = get_harold_list(auth_dict["uid"])
+    return render_template("main.html", db_files=db_files,
+                get_file_s3=get_file_s3, get_date_modified=get_date_modified,
+                s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
+                is_rtp=True, is_eboard=True)
+
+
 @app.route("/upload", methods=["GET"])
 @auth.oidc_auth
 @audiophiler_auth
