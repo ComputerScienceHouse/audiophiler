@@ -4,7 +4,7 @@
 
 
 import hashlib, os, flask_migrate, requests, subprocess, random, json
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -66,9 +66,9 @@ def home(auth_dict=None):
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
     return render_template("main.html", db_files=db_files,
-                get_file_s3=get_file_s3, get_date_modified=get_date_modified,
-                s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
-                is_rtp=is_rtp, is_eboard=is_eboard)
+                get_date_modified=get_date_modified, s3_bucket=s3_bucket,
+                auth_dict=auth_dict, harolds=harolds, is_rtp=is_rtp,
+                is_eboard=is_eboard)
 
 
 @app.route("/mine")
@@ -81,7 +81,7 @@ def mine(auth_dict=None):
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
-                is_rtp=True, is_eboard=True)
+                is_rtp=False, is_eboard=False)
 
 
 @app.route("/upload", methods=["GET"])
@@ -165,6 +165,14 @@ def delete_file(file_hash, auth_dict=None):
     remove_harold(file_hash, auth_dict)
 
     return "OK go for it", 200
+
+
+@app.route("/get_file_url/<string:file_hash>")
+@auth.oidc_auth
+@audiophiler_auth
+def get_s3_url(file_hash, auth_dict=None):
+    # Endpoint to return a presigned url to the s3 asset
+    return redirect(get_file_s3(s3_bucket, file_hash))
 
 
 @app.route("/set_harold/<string:file_hash>", methods=["POST"])
