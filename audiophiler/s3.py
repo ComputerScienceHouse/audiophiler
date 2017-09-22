@@ -22,7 +22,8 @@ def get_file_list(bucket):
 
 def get_date_modified(bucket, file_hash):
     # Get date modified for a specific file in the bucket
-    return bucket.get_key(file_hash).last_modified
+    date =  bucket.get_key(file_hash).last_modified
+    return date[:(date.index(":") - 2)]
 
 
 def upload_file(bucket, file_hash, f):

@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 from csh_ldap import CSHLDAP
 
 
-from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file
+from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file, remove_file
 from audiophiler.util import audiophiler_auth
 
 
@@ -44,6 +44,7 @@ s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
 db = SQLAlchemy(app)
 migrate = flask_migrate.Migrate(app, db)
 
+# Create CSHLDAP connection
 ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
                app.config["LDAP_BIND_PW"])
 
@@ -52,7 +53,7 @@ ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
 requests.packages.urllib3.disable_warnings()
 
 
-# Import db models after instantiating db model
+# Import db models after instantiating db object
 from audiophiler.models import File, Harold, Auth
 
 
@@ -150,6 +151,7 @@ def upload(auth_dict=None):
 @auth.oidc_auth
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
+    # Find file model in db
     file_model = File.query.filter(File.file_hash == file_hash).first()
 
     if file_model is None:
@@ -159,10 +161,14 @@ def delete_file(file_hash, auth_dict=None):
         if not (ldap_is_eboard(auth_dict["uid"]) or ldap_is_rtp(auth_dict["uid"])):
             return "Permission Denied", 403
 
+    # Delete file model
     db.session.delete(file_model)
     db.session.flush()
     db.session.commit()
-    remove_harold(file_hash, auth_dict)
+    # Delete harold model
+    remove_harold(file_hash)
+    # Delete file from s3
+    remove_file(s3_bucket, file_hash)
 
     return "OK go for it", 200
 
