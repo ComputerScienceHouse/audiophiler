@@ -17,6 +17,7 @@ from audiophiler.util import audiophiler_auth
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 # Get app config from absolute file path
 if os.path.exists(os.path.join(os.getcwd(), "config.py")):
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
@@ -44,17 +45,21 @@ s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
 db = SQLAlchemy(app)
 migrate = flask_migrate.Migrate(app, db)
 
+
+# Import db models after instantiating db object
+from audiophiler.models import File, Harold, Auth
+
+
 # Create CSHLDAP connection
 ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
                app.config["LDAP_BIND_PW"])
 
+# Import ldap functions after creating ldap conn
+from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
+
 
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
-
-
-# Import db models after instantiating db object
-from audiophiler.models import File, Harold, Auth
 
 
 @app.route("/")
@@ -235,15 +240,3 @@ def get_harold_list(uid):
             harolds.append(harold.file_hash)
 
     return harolds
-
-
-def ldap_is_eboard(uid):
-    eboard_group = ldap.get_group("eboard")
-    return eboard_group.check_member(ldap.get_member(uid, uid=True))
-
-
-def ldap_is_rtp(uid):
-    rtp_group = ldap.get_group("rtp")
-    return rtp_group.check_member(ldap.get_member(uid, uid=True))
-
-
