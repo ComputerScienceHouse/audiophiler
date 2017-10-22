@@ -20,10 +20,10 @@
                 </div>
             {% endif %}
 
-            {% if loop.index is divisibleby 2 or loop.index0 == 0 %}
+            {% if loop.index0 is divisibleby 2 %}
             <div class="row">
             {% endif %}
-                <div class="col-xs-6">
+                <div class="col-xs-12 col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading"></div>
                         <div class="panel-body">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 </div>
-            {% if loop.index is divisibleby 2 or loop.index0 == 0 %}
+            {% if not loop.index0 is divisibleby 2 %}
             </div>
             {% endif %}
         {% endfor %}
