@@ -29,7 +29,7 @@
                         <div class="panel-body">
                             <h5 class="title">{{ file.name }}</h5>
                             <audio controls="controls" controlsList="nodownload" preload="none" id="audio"
-                                   src="{{"/get_file_url/" +  file.file_hash }}" type="audio/mpeg"
+                                   src="{{"/get_file_url/" +  file.file_hash }}" type="audio/*"
                                    download="{{ file.name }}">
                             </audio>
                             <h6>Owner: {{ file.author }} Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
