@@ -5,6 +5,7 @@
 
 import boto
 import boto.s3.connection
+import mimetypes
 
 
 def get_file_s3(bucket, file_hash):
@@ -29,8 +30,10 @@ def get_date_modified(bucket, file_hash):
 def upload_file(bucket, file_hash, f):
     # Create bucket key with filename
     key = bucket.new_key(file_hash)
+    # Set content type
+    content_type = mimetypes.guess_type(f.filename)[0]
     # Upload the file
-    key.set_contents_from_file(f)
+    key.set_contents_from_file(f, headers={"Content-Type": content_type})
 
 
 def remove_file(bucket, file_hash):
