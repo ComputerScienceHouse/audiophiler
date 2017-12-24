@@ -21,5 +21,5 @@ deleteFile.click(function () {
         method: "POST",
         credentials: "same-origin"
     });
-    window.location.reload(true);
+    setTimeout(window.location.reload(true), 750);
 });

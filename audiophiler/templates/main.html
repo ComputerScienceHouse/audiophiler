@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% block body %}
     <div class="container">
-        {% for file in db_files %}
-            {% if config['PLUG_SUPPORT'] and loop.index0 == 0 %}
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug" style="color: #000000">
-                            Advertisements by CSH: Plug
+        {% if config['PLUG_SUPPORT'] %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug" style="color: #000000">
+                        Advertisements by CSH: Plug
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <div class="plug-body">
+                        <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
+                            <img style="width: 100%" src="https://plug.csh.rit.edu/data"
+                                 alt="Advertisements by CSH: Plug">
                         </a>
                     </div>
-                    <div class="panel-body">
-                        <div class="plug-body">
-                            <a href="https://plug.csh.rit.edu" title="Advertisements by CSH: Plug">
-                                <img style="width: 100%" src="https://plug.csh.rit.edu/data"
-                                     alt="Advertisements by CSH: Plug">
-                            </a>
-                        </div>
-                    </div>
                 </div>
-            {% endif %}
+            </div>
+        {% endif %}
 
+        {% for file in db_files %}
             {% if loop.index0 is divisibleby 2 %}
-            <div class="row">
+                <div class="row">
             {% endif %}
                 <div class="col-xs-12 col-md-6">
                     <div class="panel panel-primary">
@@ -32,7 +32,7 @@
                                    src="{{"/get_file_url/" +  file.file_hash }}"
                                    type="audio/*" download="{{ file.name }}">
                             </audio>
-                            <h6>Owner: {{ file.author }} Last modified: {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
+                            <h6>Owner: {{ file.author }} uploaded {{ get_date_modified(s3_bucket, file.file_hash) }}</h6>
                             <div class="form-group">
                                 <div class="checkbox">
                                     <label>
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="remove">
                                     {% if file.author == auth_dict["uid"] or is_rtp or is_eboard %}
-                                        <button class="glyphicon glyphicon-trash" data-hash={{ file.file_hash }}>Remove?
+                                        <button class="glyphicon glyphicon-trash" data-hash={{ file.file_hash }}>Remove
                                         </button>
                                     {% endif %}
                                 </div>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             {% if not loop.index0 is divisibleby 2 %}
-            </div>
+                </div>
             {% endif %}
         {% endfor %}
     </div>
