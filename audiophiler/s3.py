@@ -31,17 +31,20 @@ def upload_file(bucket, file_hash, f):
     # Create bucket key with filename
     key = bucket.new_key(file_hash)
     # Set content type
+    # There is most certainly a better way to do this but w/e
     content_type = mimetypes.guess_type(f.filename)[0]
     # Upload the file
     key.set_contents_from_file(f, headers={"Content-Type": content_type})
 
 
 def remove_file(bucket, file_hash):
+    # Does anybody read these comments
     bucket.delete_key(file_hash)
 
 
 def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
     # Establish s3 connection through boto
+    # Formatting long paramter strings is never fun
     conn = boto.connect_s3(
                 aws_access_key_id = s3_key,
                 aws_secret_access_key = s3_secret,
