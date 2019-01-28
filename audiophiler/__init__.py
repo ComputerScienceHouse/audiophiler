@@ -5,6 +5,7 @@
 
 import hashlib, os, flask_migrate, requests, subprocess, random, json
 from flask import Flask, render_template, request, jsonify, redirect
+from flask_pyoidc.provider_configuration import *
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -30,10 +31,14 @@ app.config["GIT_REVISION"] = subprocess.check_output(['git',
                                                       '--short',
                                                       'HEAD']).decode('utf-8').rstrip()
 
-
-auth = OIDCAuthentication(app,
-                          issuer = app.config["OIDC_ISSUER"],
-                          client_registration_info = app.config["OIDC_CLIENT_CONFIG"])
+_config = ProviderConfiguration(
+    app.config['OIDC_ISSUER'],
+    client_metadata = ClientMetadata(
+        app.config['OIDC_CLIENT_CONFIG']['client_id'],
+        app.config['OIDC_CLIENT_CONFIG']['client_secret']
+    )
+)
+auth = OIDCAuthentication({'default': _config}, app)
 
 
 # Get s3 bucket for use in functions and templates
@@ -63,7 +68,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 @app.route("/")
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def home(auth_dict=None):
     # Retrieve list of files for templating
@@ -78,7 +83,7 @@ def home(auth_dict=None):
 
 
 @app.route("/mine")
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def mine(auth_dict=None):
     # Retrieve list of files for templating
@@ -91,14 +96,14 @@ def mine(auth_dict=None):
 
 
 @app.route("/upload", methods=["GET"])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def upload_page(auth_dict=None):
     return render_template("upload.html", auth_dict=auth_dict)
 
 
 @app.route("/upload", methods=["POST"])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def upload(auth_dict=None):
     uploaded_files = [t[1] for t in request.files.items()]
@@ -153,7 +158,7 @@ def upload(auth_dict=None):
 
 
 @app.route("/delete/<string:file_hash>", methods=["POST"])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def delete_file(file_hash, auth_dict=None):
     # Find file model in db
@@ -179,7 +184,7 @@ def delete_file(file_hash, auth_dict=None):
 
 
 @app.route("/get_file_url/<string:file_hash>")
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def get_s3_url(file_hash, auth_dict=None):
     # Endpoint to return a presigned url to the s3 asset
@@ -187,7 +192,7 @@ def get_s3_url(file_hash, auth_dict=None):
 
 
 @app.route("/set_harold/<string:file_hash>", methods=["POST"])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def set_harold(file_hash, auth_dict=None):
     harold_model = Harold(file_hash, auth_dict["uid"])
@@ -199,7 +204,7 @@ def set_harold(file_hash, auth_dict=None):
 
 
 @app.route("/delete_harold/<string:file_hash>", methods=["POST"])
-@auth.oidc_auth
+@auth.oidc_auth('default')
 @audiophiler_auth
 def remove_harold(file_hash, auth_dict=None):
     harold_model = Harold.query.filter(Harold.file_hash == file_hash).first()
