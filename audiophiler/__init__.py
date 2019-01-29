@@ -3,7 +3,13 @@
 # @author: Stephen Greene (sgreene570)
 
 
-import hashlib, os, flask_migrate, requests, subprocess, random, json
+import hashlib
+import os
+import random
+import subprocess
+import json
+import requests
+import flask_migrate
 from flask import Flask, render_template, request, jsonify, redirect
 from flask_pyoidc.provider_configuration import *
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
@@ -223,8 +229,8 @@ def get_harold(uid, auth_dict=None):
     data_dict = request.get_json()
     if data_dict["auth_key"]:
         auth_models = Auth.query.all()
-        for auth in auth_models:
-            if auth.auth_key == data_dict["auth_key"]:
+        for auth_obj in auth_models:
+            if auth_obj.auth_key == data_dict["auth_key"]:
                 harolds = get_harold_list(uid)
                 return get_file_s3(s3_bucket, random.choice(harolds))
 

@@ -3,9 +3,9 @@
 # @author: Stephen Greene (sgreene570)
 
 
+import mimetypes
 import boto
 import boto.s3.connection
-import mimetypes
 
 
 def get_file_s3(bucket, file_hash):

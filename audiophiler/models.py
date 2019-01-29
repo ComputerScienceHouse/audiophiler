@@ -5,7 +5,6 @@
 
 from sqlalchemy import Column
 from sqlalchemy import Integer
-from sqlalchemy import ForeignKey
 from sqlalchemy import Text
 
 
