@@ -1,4 +1,7 @@
 # audiophiler
+
+[![Build Status](https://travis-ci.org/sgreene570/audiophiler.svg?branch=master)](https://travis-ci.org/sgreene570/audiophiler)
+
 s3 audio file storage with templated front end.
 <br>
 Written for [Computer Science House](https://csh.rit.edu).  More info on the CSH wiki.
