@@ -11,7 +11,7 @@ SERVER_NAME = os.getenv("SERVER_NAME", default="audiophiler.csh.rit.edu")
 
 
 # OpenID Connect SSO config
-OIDC_ISSUER = os.getenv("OIDC_ISSUER", default="https://sso.csh.rit.edu/realms/csh")
+OIDC_ISSUER = os.getenv("OIDC_ISSUER", default="https://sso.csh.rit.edu/auth/realms/csh")
 OIDC_CLIENT_CONFIG = {
     "client_id": os.getenv("OIDC_CLIENT_ID", default="audiophiler"),
     "client_secret": os.getenv("OIDC_CLIENT_SECRET", default=None),
