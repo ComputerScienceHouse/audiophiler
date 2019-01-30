@@ -1,12 +1,9 @@
 # File: s3.py
 # Audiophiler s3 API calls
-# @author: Stephen Greene (sgreene570)
-
 
 import mimetypes
 import boto
 import boto.s3.connection
-
 
 def get_file_s3(bucket, file_hash):
     key = bucket.get_key(file_hash)
@@ -15,17 +12,14 @@ def get_file_s3(bucket, file_hash):
     # for the streaming to continue, uninterrupted.
     return key.generate_url(90, query_auth=True)
 
-
 def get_file_list(bucket):
     # List all files in the bucket
     return bucket.list()
-
 
 def get_date_modified(bucket, file_hash):
     # Get date modified for a specific file in the bucket
     date =  bucket.get_key(file_hash).last_modified
     return date[:(date.index(":") - 2)]
-
 
 def upload_file(bucket, file_hash, f):
     # Create bucket key with filename
@@ -36,11 +30,9 @@ def upload_file(bucket, file_hash, f):
     # Upload the file
     key.set_contents_from_file(f, headers={"Content-Type": content_type})
 
-
 def remove_file(bucket, file_hash):
     # Does anybody read these comments
     bucket.delete_key(file_hash)
-
 
 def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
     # Establish s3 connection through boto
@@ -49,7 +41,6 @@ def get_bucket(s3_url, s3_key, s3_secret, bucket_name):
                 aws_access_key_id = s3_key,
                 aws_secret_access_key = s3_secret,
                 host = s3_url,
-                calling_format = boto.s3.connection.OrdinaryCallingFormat(),
-                )
+                calling_format = boto.s3.connection.OrdinaryCallingFormat())
     # Return the bucket rather than the entire resource
     return conn.get_bucket(bucket_name)

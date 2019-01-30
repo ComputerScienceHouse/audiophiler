@@ -1,15 +1,11 @@
 # File: models.py
 # Audiophiler sqlalchemy database models
-# @author Stephen Greene (sgreene570)
-
 
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Text
 
-
 from audiophiler import db
-
 
 class File(db.Model):
     __tablename__ = "files"
@@ -23,7 +19,6 @@ class File(db.Model):
         self.author = author
         self.file_hash = file_hash
 
-
 class Harold(db.Model):
     __tablename__ = "harolds"
     id = Column(Integer, primary_key=True)
@@ -33,7 +28,6 @@ class Harold(db.Model):
     def __init__(self, file_hash, owner):
         self.file_hash = file_hash
         self.owner = owner
-
 
 class Auth(db.Model):
     __tablename__ = "auth"

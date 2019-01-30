@@ -1,7 +1,5 @@
 # File: __init__.py
 # Audiophiler main flask functions
-# @author: Stephen Greene (sgreene570)
-
 
 import hashlib
 import os
@@ -17,10 +15,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from csh_ldap import CSHLDAP
 
-
 from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file, remove_file
 from audiophiler.util import audiophiler_auth
-
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -31,11 +27,8 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
-
-app.config["GIT_REVISION"] = subprocess.check_output(['git',
-                                                      'rev-parse',
-                                                      '--short',
-                                                      'HEAD']).decode('utf-8').rstrip()
+git_cmd = ['git', 'rev-parse', '--short', 'HEAD']
+app.config["GIT_REVISION"] = subprocess.check_output(git_cmd).decode('utf-8').rstrip()
 
 _config = ProviderConfiguration(
     app.config['OIDC_ISSUER'],
@@ -46,20 +39,16 @@ _config = ProviderConfiguration(
 )
 auth = OIDCAuthentication({'default': _config}, app)
 
-
 # Get s3 bucket for use in functions and templates
 s3_bucket = get_bucket(app.config["S3_URL"], app.config["S3_KEY"],
                 app.config["S3_SECRET"], app.config["BUCKET_NAME"])
-
 
 # Database setup
 db = SQLAlchemy(app)
 migrate = flask_migrate.Migrate(app, db)
 
-
 # Import db models after instantiating db object
 from audiophiler.models import File, Harold, Auth
-
 
 # Create CSHLDAP connection
 ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
@@ -68,10 +57,8 @@ ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
 # Import ldap functions after creating ldap conn
 from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 
-
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
-
 
 @app.route("/")
 @auth.oidc_auth('default')
@@ -87,7 +74,6 @@ def home(auth_dict=None):
                 auth_dict=auth_dict, harolds=harolds, is_rtp=is_rtp,
                 is_eboard=is_eboard)
 
-
 @app.route("/mine")
 @auth.oidc_auth('default')
 @audiophiler_auth
@@ -100,13 +86,11 @@ def mine(auth_dict=None):
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
                 is_rtp=False, is_eboard=False)
 
-
 @app.route("/upload", methods=["GET"])
 @auth.oidc_auth('default')
 @audiophiler_auth
 def upload_page(auth_dict=None):
     return render_template("upload.html", auth_dict=auth_dict)
-
 
 @app.route("/upload", methods=["POST"])
 @auth.oidc_auth('default')
@@ -154,14 +138,12 @@ def upload(auth_dict=None):
         db.session.refresh(file_model)
 
         # Set success status info
-        upload_status["success"].append(
-            {
-                "name": file_model.name,
-                "file_hash": file_model.file_hash
-            })
+        upload_status["success"].append({
+            "name": file_model.name,
+            "file_hash": file_model.file_hash
+        })
 
     return jsonify(upload_status)
-
 
 @app.route("/delete/<string:file_hash>", methods=["POST"])
 @auth.oidc_auth('default')
@@ -188,14 +170,12 @@ def delete_file(file_hash, auth_dict=None):
 
     return "OK go for it", 200
 
-
 @app.route("/get_file_url/<string:file_hash>")
 @auth.oidc_auth('default')
 @audiophiler_auth
 def get_s3_url(file_hash, auth_dict=None):
     # Endpoint to return a presigned url to the s3 asset
     return redirect(get_file_s3(s3_bucket, file_hash))
-
 
 @app.route("/set_harold/<string:file_hash>", methods=["POST"])
 @auth.oidc_auth('default')
@@ -207,7 +187,6 @@ def set_harold(file_hash, auth_dict=None):
     db.session.commit()
     db.session.refresh(harold_model)
     return "OK", 200
-
 
 @app.route("/delete_harold/<string:file_hash>", methods=["POST"])
 @auth.oidc_auth('default')
@@ -223,7 +202,6 @@ def remove_harold(file_hash, auth_dict=None):
 
     return "OK go for it", 200
 
-
 @app.route("/get_harold/<string:uid>", methods=["POST"])
 def get_harold(uid, auth_dict=None):
     data_dict = request.get_json()
@@ -236,12 +214,10 @@ def get_harold(uid, auth_dict=None):
 
     return "Permission denied", 403
 
-
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
     return redirect("/", 302)
-
 
 def get_harold_list(uid):
     harold_list = Harold.query.all()

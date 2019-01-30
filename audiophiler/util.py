@@ -1,13 +1,10 @@
 # File: util.py
 # Audiophiler utility functions
-# @author: Stephen Greene
 # Credit to Liam Middlebrook and Ram Zallan
 # https://github.com/liam-middlebrook/gallery
 
-
 from functools import wraps
 from flask import session
-
 
 def audiophiler_auth(func):
     @wraps(func)
