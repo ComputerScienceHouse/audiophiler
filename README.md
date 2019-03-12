@@ -16,6 +16,7 @@ TODO:
 * Use dynamic front end library (react?, or something)
 * Switch over to boto3 instead of boto
 * Move helper functions out of init.py
+* Actually save file types at upload time for streaming purposes
 
 # Installation
 From the root directory of the repo, setup a virtualenv with python3, then:

@@ -5,6 +5,7 @@
 
 from functools import wraps
 from flask import session
+from audiophiler.models import Tour
 
 def audiophiler_auth(func):
     @wraps(func)
@@ -18,3 +19,7 @@ def audiophiler_auth(func):
         kwargs["auth_dict"] = auth_dict
         return func(*args, **kwargs)
     return wrapped_function
+
+def get_tour_lock_status():
+    lock = Tour.query.first()
+    return lock.tour_lock

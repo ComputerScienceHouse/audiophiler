@@ -5,3 +5,6 @@ audiophiler.egg-info
 build
 AUTHORS
 ChangeLog
+creds
+.eggs
+.vscode

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="theme-color" content="#B0197E">
-    <link rel="stylesheet" href="https://s3.csh.rit.edu/csh-material-bootstrap/3.3.6/dist/csh-material-bootstrap.min.css">
+    <link rel="stylesheet" href="https://assets.csh.rit.edu/csh-material-bootstrap/3.3.6/dist/csh-material-bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon">
@@ -39,6 +39,32 @@
                             My Files
                         </a>
                     </li>
+                    {% if is_rtp or is_eboard %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-music"></span> Harold
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="/tour_page">
+                                        <span class="glyphicon glyphicon-user"></span> Tour Mode
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/selected">
+                                        <span class="glyphicon glyphicon-tasks"></span> Selected Harolds
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/selected">
+                                Selected Harolds
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown navbar-user">

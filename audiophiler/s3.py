@@ -7,7 +7,7 @@ import boto.s3.connection
 
 def get_file_s3(bucket, file_hash):
     key = bucket.get_key(file_hash)
-    # Generates presigned URL that lasts for 90 seconds (1.5 minutes)
+    # Generates presigned URL that lasts for 60 seconds (1 minute)
     # If streaming begins prior to the time cutoff, s3 will allow
     # for the streaming to continue, uninterrupted.
     return key.generate_url(90, query_auth=True)
