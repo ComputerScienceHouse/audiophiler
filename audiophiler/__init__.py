@@ -202,6 +202,7 @@ def remove_harold(file_hash, auth_dict=None):
 
     return "OK go for it", 200
 
+# This is a post route since auth_key is required
 @app.route("/get_harold/<string:uid>", methods=["POST"])
 def get_harold(uid, auth_dict=None):
     data_dict = request.get_json()
