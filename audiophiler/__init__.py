@@ -15,8 +15,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from csh_ldap import CSHLDAP
 
-from audiophiler.s3 import get_file_s3, get_file_list, get_date_modified, get_bucket, upload_file, remove_file
-from audiophiler.util import audiophiler_auth
+from audiophiler.s3 import *
+from audiophiler.util import *
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -210,8 +210,14 @@ def get_harold(uid, auth_dict=None):
         auth_models = Auth.query.all()
         for auth_obj in auth_models:
             if auth_obj.auth_key == data_dict["auth_key"]:
-                harolds = get_harold_list(uid)
-                return get_file_s3(s3_bucket, random.choice(harolds))
+                harold_file_hash = None
+                harolds_list = get_harold_list(uid)
+                if len(harolds_list) == 0:
+                    harold_file_hash = get_random_harold()
+                else:
+                    harold_file_hash = random.choice(harolds_list)
+
+                return get_file_s3(s3_bucket, harold_file_hash)
 
     return "Permission denied", 403
 
@@ -221,10 +227,14 @@ def logout():
     return redirect("/", 302)
 
 def get_harold_list(uid):
-    harold_list = Harold.query.all()
-    harolds = []
-    for harold in harold_list:
-        if harold.owner == uid:
-            harolds.append(harold.file_hash)
+    harold_list = Harold.query.filter_by(owner=uid).all()
+    harolds = [harold.file_hash for harold in harold_list]
 
     return harolds
+
+def get_random_harold():
+    query = Harold.query
+    row_count = int(query.count())
+    randomized_entry = query.offset(int(row_count*random.random())).first()
+
+    return randomized_entry.file_hash

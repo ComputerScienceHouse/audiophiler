@@ -6,3 +6,5 @@ build
 AUTHORS
 ChangeLog
 creds
+.eggs
+.vscode
