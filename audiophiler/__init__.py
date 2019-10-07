@@ -211,6 +211,9 @@ def get_harold(uid, auth_dict=None):
         for auth_obj in auth_models:
             if auth_obj.auth_key == data_dict["auth_key"]:
                 harolds = get_harold_list(uid)
+                if len(harolds) == 0:
+                    harolds = Harold.query.all()
+
                 return get_file_s3(s3_bucket, random.choice(harolds))
 
     return "Permission denied", 403
