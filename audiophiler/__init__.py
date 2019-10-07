@@ -220,6 +220,7 @@ def get_harold(uid, auth_dict=None):
                 return get_file_s3(s3_bucket, harold_file_hash)
 
 
+
     return "Permission denied", 403
 
 @app.route("/logout")
