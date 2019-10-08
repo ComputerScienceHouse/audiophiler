@@ -212,7 +212,7 @@ def get_harold(uid, auth_dict=None):
             if auth_obj.auth_key == data_dict["auth_key"]:
                 harolds = get_harold_list(uid)
                 if len(harolds) == 0:
-                    harolds = get_random_harold_list()
+                    harolds = get_random_harold()
 
                 return get_file_s3(s3_bucket, random.choice(harolds))
 
@@ -224,18 +224,15 @@ def logout():
     return redirect("/", 302)
 
 def get_harold_list(uid):
-    harold_list = Harold.query.all()
-    harolds = []
-    for harold in harold_list:
-        if harold.owner == uid:
-            harolds.append(harold.file_hash)
+    harold_list = Harold.query.filter_by(owner=uid).all()
+    harolds = [harold.file_hash for harold in harold_list]
 
     return harolds
 
-def get_random_harold_list():
-    harold_list = Harold.query.all()
-    harolds = []
-    for harold in harold_list:
-        harolds.append(harold.file_hash)
+def get_random_harold():
+    query = Harold.query
+    rowCount = int(query.count())
+    randomizeEntry = query.offset(int(rowCount*random.random())).first()
+    harolds = randomizeEntry.file_hash
 
     return harolds
