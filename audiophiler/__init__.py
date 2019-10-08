@@ -212,7 +212,7 @@ def get_harold(uid, auth_dict=None):
             if auth_obj.auth_key == data_dict["auth_key"]:
                 harolds = get_harold_list(uid)
                 if len(harolds) == 0:
-                    harolds = get_random_harold_list
+                    harolds = get_random_harold_list()
 
                 return get_file_s3(s3_bucket, random.choice(harolds))
 
