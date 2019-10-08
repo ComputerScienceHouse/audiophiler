@@ -211,10 +211,11 @@ def get_harold(uid, auth_dict=None):
         for auth_obj in auth_models:
             if auth_obj.auth_key == data_dict["auth_key"]:
                 harold_file_hash = None
-                if len(harolds) == 0:
+                harolds_list = get_harold_list(uid)
+                if len(harolds_list) == 0:
                     harold_file_hash = get_random_harold()
                 else:
-                    harold_file_hash = random.choice(get_harold_list(uid))
+                    harold_file_hash = random.choice(harolds_list)
 
                 return get_file_s3(s3_bucket, harold_file_hash)
 
@@ -233,7 +234,7 @@ def get_harold_list(uid):
 
 def get_random_harold():
     query = Harold.query
-    rowCount = int(query.count())
-    randomizedEntry = query.offset(int(rowCount*random.random())).first()
+    row_count = int(query.count())
+    randomized_entry = query.offset(int(row_count*random.random())).first()
 
-    return randomizedEntry.file_hash
+    return randomized_entry.file_hash
