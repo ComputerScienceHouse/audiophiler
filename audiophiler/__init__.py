@@ -221,10 +221,4 @@ def logout():
     return redirect("/", 302)
 
 def get_harold_list(uid):
-    harold_list = Harold.query.all()
-    harolds = []
-    for harold in harold_list:
-        if harold.owner == uid:
-            harolds.append(harold.file_hash)
-
-    return harolds
+    return Harold.query.filter_by(owner=uid)
