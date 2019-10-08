@@ -210,11 +210,13 @@ def get_harold(uid, auth_dict=None):
         auth_models = Auth.query.all()
         for auth_obj in auth_models:
             if auth_obj.auth_key == data_dict["auth_key"]:
-                harolds = get_harold_list(uid)
+                harold_file_hash = None
                 if len(harolds) == 0:
-                    harolds = get_random_harold()
+                    harold_file_hash = get_random_harold()
+                else:
+                    harold_file_hash = random.choice(get_harold_list(uid))
 
-                return get_file_s3(s3_bucket, random.choice(harolds))
+                return get_file_s3(s3_bucket, harold_file_hash)
 
     return "Permission denied", 403
 
@@ -232,7 +234,6 @@ def get_harold_list(uid):
 def get_random_harold():
     query = Harold.query
     rowCount = int(query.count())
-    randomizeEntry = query.offset(int(rowCount*random.random())).first()
-    harolds = randomizeEntry.file_hash
+    randomizedEntry = query.offset(int(rowCount*random.random())).first()
 
-    return harolds
+    return randomizedEntry.file_hash
