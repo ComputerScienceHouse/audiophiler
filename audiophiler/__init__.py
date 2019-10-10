@@ -86,6 +86,21 @@ def mine(auth_dict=None):
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
                 is_rtp=False, is_eboard=False)
 
+@app.route("/selected")
+@auth.oidc_auth('default')
+@audiophiler_auth
+def selected(auth_dict=None):
+    #Retrieve list of files for tmeplating
+    db_files = []
+    for local_hash in get_file_list(auth_dict["uid"]):
+        query = File.query.filter_by(file_hash=local_hash).all()
+        db_files.append(query)
+    harolds = get_harold_list(auth_dict["uid"])
+    return render_template("main.html", db_files=db_files,
+                get_date_modified=get_date_modified, s3_bucket=s3_bucket,
+                auth_dict=auth_dict, harolds=harolds, is_rtp=False,
+                is_eboard=False)
+
 @app.route("/upload", methods=["GET"])
 @auth.oidc_auth('default')
 @audiophiler_auth
@@ -213,6 +228,8 @@ def get_harold(uid, auth_dict=None):
 
                 return get_file_s3(s3_bucket, harold_file_hash)
 
+
+
     return "Permission denied", 403
 
 @app.route("/logout")
@@ -232,3 +249,4 @@ def get_random_harold():
     randomized_entry = query.offset(int(row_count*random.random())).first()
 
     return randomized_entry.file_hash
+    
