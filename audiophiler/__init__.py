@@ -92,7 +92,7 @@ def mine(auth_dict=None):
 def selected(auth_dict=None):
     #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
-    db_files = File.query.filter_by(File.file_hash.in_(harolds)).all()
+    db_files = File.query.filter(File.file_hash.in_(harolds)).all()
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, is_rtp=False,
@@ -124,14 +124,8 @@ def upload(auth_dict=None):
         f.seek(0)
 
         # Check if file hash is the same as any files already in the db
-        file_exists = False
-        for db_file in File.query.all():
-            if file_hash == db_file.file_hash:
-                upload_status["error"].append(filename)
-                file_exists = True
-                break
-
-        if file_exists:
+        if File.query.filter_by(file_hash=file_hash).first():
+            upload_status["error"].append(filename)
             break
 
         # Add file info to db
