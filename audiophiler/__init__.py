@@ -127,14 +127,8 @@ def upload(auth_dict=None):
         f.seek(0)
 
         # Check if file hash is the same as any files already in the db
-        file_exists = False
-        for db_file in File.query.all():
-            if file_hash == db_file.file_hash:
-                upload_status["error"].append(filename)
-                file_exists = True
-                break
-
-        if file_exists:
+        if File.query.filter_by(file_hash=file_hash).first():
+            upload_status["error"].append(filename)
             break
 
         # Add file info to db
