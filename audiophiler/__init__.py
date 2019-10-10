@@ -90,12 +90,9 @@ def mine(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def selected(auth_dict=None):
-    #Retrieve list of files for tmeplating
-    db_files = []
-    for local_hash in get_file_list(auth_dict["uid"]):
-        query = File.query.filter_by(file_hash=local_hash).all()
-        db_files.append(query)
+    #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
+    db_files = File.query.filter_by(File.file_hash.in_(harolds)).all()
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, is_rtp=False,
