@@ -93,6 +93,8 @@ def selected(auth_dict=None):
     #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
     db_files = File.query.filter(File.file_hash.in_(harolds)).all()
+    is_rtp = ldap_is_rtp(auth_dict["uid"])
+    is_eboard = ldap_is_eboard(auth_dict["uid"])
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, is_rtp=is_rtp,
