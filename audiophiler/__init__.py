@@ -90,6 +90,8 @@ def mine(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def selected(auth_dict=None):
+    is_rtp = ldap_is_rtp(auth_dict["uid"])
+    is_eboard = ldap_is_eboard(auth_dict["uid"])
     #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
     db_files = File.query.filter(File.file_hash.in_(harolds)).all()
@@ -242,4 +244,3 @@ def get_random_harold():
     randomized_entry = query.offset(int(row_count*random.random())).first()
 
     return randomized_entry.file_hash
-    
