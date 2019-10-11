@@ -95,8 +95,8 @@ def selected(auth_dict=None):
     db_files = File.query.filter(File.file_hash.in_(harolds)).all()
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
-                auth_dict=auth_dict, harolds=harolds, is_rtp=False,
-                is_eboard=False)
+                auth_dict=auth_dict, harolds=harolds, is_rtp=is_rtp,
+                is_eboard=is_eboard)
 
 @app.route("/upload", methods=["GET"])
 @auth.oidc_auth('default')
