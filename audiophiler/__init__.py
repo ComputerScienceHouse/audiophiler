@@ -73,7 +73,7 @@ def home(auth_dict=None):
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
-                is_rtp=is_rtp,is_eboard=is_eboard, is_tour_page=False)
+                is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False)
 
 @app.route("/mine")
 @auth.oidc_auth('default')
