@@ -1,9 +1,7 @@
 # File: models.py
 # Audiophiler sqlalchemy database models
 
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import Text
+from sqlalchemy import Column, Integer, Text, Boolean
 
 from audiophiler import db
 
@@ -36,3 +34,7 @@ class Auth(db.Model):
 
     def __init__(self, auth_key):
         self.auth_key = auth_key
+
+class Tour(db.Model):
+    __tablename__ = "tour"
+    tour_lock = Column(Boolean, primary_key=True, default=False)

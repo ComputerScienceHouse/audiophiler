@@ -19,6 +19,24 @@
             </div>
         {% endif %}
 
+        {% if (is_rtp or is_eboard) and is_tour_page %}
+            {% if is_tour_mode %}
+                <div class="col" align="center">
+                    <button type="button" class="btn btn-primary" style="margin: 5%;" onclick="toggleTourModeOff()">
+                        <span class="glyphicon glyphicon-volume-on"></span>
+                        Turn Tour Mode Off
+                    </button>
+                </div>
+            {% else %}
+                <div class="col" align="center">
+                    <button type="button" class="btn btn-primary" style="margin: 5%;" onclick="toggleTourModeOn()">
+                        <span class="glyphicon glyphicon-volume-off"></span>
+                        Turn Tour Mode On
+                    </button>
+                </div>
+            {% endif %}
+        {% endif %}
+
         {% for file in db_files %}
             {% if loop.index0 is divisibleby 2 %}
                 <div class="row">
@@ -40,6 +58,13 @@
                                                data-hash={{ file.file_hash }} {% if file.file_hash in harolds %} checked="checked" {% endif %}
                                                class="toggleHarold"> Toggle Harold
                                     </label>
+                                    {% if is_eboard or is_rtp %}
+                                        <label>
+                                            <input type="checkbox"
+                                                data-hash={{ file.file_hash }} {% if file.file_hash in tour_harolds %} checked="checked" {% endif %}
+                                                class="toggleTour"> Toggle Tour
+                                        </label>
+                                    {% endif %}
                                 </div>
                                 <div class="remove">
                                     {% if file.author == auth_dict["uid"] or is_rtp or is_eboard %}
