@@ -60,10 +60,6 @@ from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
 
-# Global variable for setting Jumpstart data on the same instance as harold instances
-jumpstart_file_name = ""
-
-
 @app.route("/")
 @auth.oidc_auth('default')
 @audiophiler_auth
@@ -286,7 +282,7 @@ def get_harold(uid, auth_dict=None):
 
 # This is a post route since auth_key is required
 @app.route("/get_file_name/<string:uid>", methods=["POST"])
-def get_harold(uid, auth_dict=None):
+def get_file_name(uid, auth_dict=None):
     data_dict = request.get_json()
     if data_dict["auth_key"]:
         auth_models = Auth.query.all()
