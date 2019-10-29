@@ -276,8 +276,8 @@ def get_harold(uid, auth_dict=None):
                 else:
                     harold_file_hash = random.choice(get_harold_list('root'))
                 send = {}
-                for the_file_name in File.query.filter_by(file_hash=harold_file_hash).all():
-                    send = {'name': the_file_name.name, 'url': get_file_s3(s3_bucket, harold_file_hash)}
+                current_file_name = File.query.filter_by(file_hash=harold_file_hash).all()
+                send = {'name': current_file_name.name, 'url': get_file_s3(s3_bucket, harold_file_hash)}
                 return jsonify(send);
 
     return "Permission denied", 403
