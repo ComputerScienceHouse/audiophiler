@@ -269,38 +269,16 @@ def get_harold(uid, auth_dict=None):
                 harold_file_hash = None
                 if not get_tour_lock_status():
                     harolds_list = get_harold_list(uid)
-                    
                     if len(harolds_list) == 0:
                         harold_file_hash = get_random_harold()
                     else:
                         harold_file_hash = random.choice(harolds_list)
                 else:
                     harold_file_hash = random.choice(get_harold_list('root'))
-                return get_file_s3(s3_bucket, harold_file_hash)
-
-    return "Permission denied", 403
-
-# This is a post route since auth_key is required
-@app.route("/get_file_name/<string:uid>", methods=["POST"])
-def get_file_name(uid, auth_dict=None):
-    data_dict = request.get_json()
-    if data_dict["auth_key"]:
-        auth_models = Auth.query.all()
-        for auth_obj in auth_models:
-            if auth_obj.auth_key == data_dict["auth_key"]:
-                harold_file_hash = None
-                if not get_tour_lock_status():
-                    harolds_list = get_harold_list(uid)
-                    file_name_list = get_file_name_list(uid)
-                    if len(harolds_list) == 0:
-                        harold_file_hash = get_random_harold()
-                    else:
-                        harold_file_hash = random.choice(harolds_list)
-                        jumpstart_file_name = random.choice(file_name_list)
-                else:
-                    harold_file_hash = random.choice(get_harold_list('root'))
-                    jumpstart_file_name = random.choice(get_file_name_list('root'))
-                return get_file_s3(s3_bucket, jumpstart_file_name)
+                send = {}
+                for the_file_name in File.query.filter_by(file_hash=harold_file_hash).all():
+                    send = {'name': the_file_name.name, 'url': get_file_s3(s3_bucket, harold_file_hash)}
+                return jsonify(send);
 
     return "Permission denied", 403
 
@@ -331,16 +309,12 @@ def logout():
 def get_harold_list(uid):
     harold_list = Harold.query.filter_by(owner=uid).all()
     harolds = [harold.file_hash for harold in harold_list]
-    return harolds
 
-def get_file_name_list(uid):
-    file_name_list = Harold.query.filter_by(owner=uid).all()
-    file_names = [harold.name for harold in harold_list]
-    return file_names
+    return harolds
 
 def get_random_harold():
     query = Harold.query
     row_count = int(query.count())
     randomized_entry = query.offset(int(row_count*random.random())).first()
-    jumpstart_file_name = randomized_entry.name
+
     return randomized_entry.file_hash
