@@ -81,5 +81,54 @@
                 </div>
             {% endif %}
         {% endfor %}
+        <div class="col" align="center">
+            <nav aria-label="page selector">
+                <ul class="pagination pagination-lg justify-content-center">
+                    {% if page == 1 %}
+                    <li class="page-item disabled"> 
+                        <a class="page-link" href="{{ current }}/{{ page - 1 }}" tabindex="-1">Previous</a>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ current }}/{{ page - 1 }}">Previous</a>
+                    {% endif %}
+                    </li>
+                    {% if rows <= 12 %}
+                        {% for num in range(1, rows + 1) %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ current }}{{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                    {% elif page < 6 %}
+                        {% for num in range(1, 12) %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ current }}/{{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                    {% elif rows - page <= 5 %}
+                        {% for num in range(rows - 10, rows + 1) %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current }}/{{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        {% for num in range(page - 5, page + 6) %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ current }}/{{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                    {% if page == rows %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="{{ current }}/{{ page + 1 }}" tabindex="-1">Next</a>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ current }}/{{ page + 1 }}">Next</a>
+                    {% endif %}
+                    </li>
+                        
+                    </li>  
+                </ul>
+            </nav>
+        </div>
     </div>
 {% endblock %}
