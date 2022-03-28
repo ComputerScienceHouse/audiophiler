@@ -71,72 +71,117 @@ def home_def(auth_dict=None):
 @audiophiler_auth
 def home(page, auth_dict=None):
     # Retrieve list of files for templating
-    rows = File.query.count()
+    query = File.query
+    rows = query.count()
     rows = int(rows // 10 + bool(rows % 10))
+
+    if page > rows or page < 1:
+        return "Page Out of Bounds", 404
+
     db_files = File.query.offset((page-1) * 10).limit(10).all()
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
+    
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
+
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
                 is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False,
-                current="", page=page, rows=rows)
+                current="", page=page, rows=rows, begin=max(1, page-6),
+                end=min(page+6, rows) + 1)
+
+@app.route("/mine")
+@auth.oidc_auth('default')
+@audiophiler_auth
+def mine_def(auth_dict=None):
+    return redirect("/mine/1")
 
 @app.route("/mine/<int:page>")
 @auth.oidc_auth('default')
 @audiophiler_auth
 def mine(page, auth_dict=None):
-    rows = File.query.count()
+    query = File.query.filter_by(author=auth_dict["uid"])
+    rows = query.count()
     rows = int(rows // 10 + bool(rows % 10))
+
+    if page > rows or page < 1:
+        return "Page Out of Bounds", 404
+
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
+
     # Retrieve list of files for templating
-    db_files = File.query.filter_by(author=auth_dict["uid"]).offset((page-1) * 10).limit(10).all()
+    db_files = query.offset((page-1) * 10).limit(10).all()
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
                 tour_harolds=tour_harolds, is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False,
-                current="/mine",page=page, rows=rows)
+                current="/mine", page=page, rows=rows, begin=max(1, page-6),
+                end=min(page+6, rows) + 1)
+
+@app.route("/selected")
+@auth.oidc_auth('default')
+@audiophiler_auth
+def selected_def(auth_dict=None):
+    return redirect("/selected/1")
 
 @app.route("/selected/<int:page>")
 @auth.oidc_auth('default')
 @audiophiler_auth
 def selected(page, auth_dict=None):
-    rows = File.query.count()
-    rows = int(rows // 10 + bool(rows % 10))
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
+    query = File.query.filter(File.file_hash.in_(harolds))
+    rows = query.count()
+    rows = int(rows // 10 + bool(rows % 10))
+
+    if page > rows or page < 1:
+        return "Page Out of Bounds", 404
+
+    is_rtp = ldap_is_rtp(auth_dict["uid"])
+    is_eboard = ldap_is_eboard(auth_dict["uid"])
+    
     tour_harolds = get_harold_list("root")
-    db_files = File.query.filter(File.file_hash.in_(harolds)).offset((page-1) * 10).limit(10).all()
+    db_files = query.offset((page-1) * 10).limit(10).all()
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
                 is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False,
-                current="/selected",page=page, rows=rows)
+                current="/selected", page=page, rows=rows, begin=max(1, page-6),
+                end=min(page+6, rows) + 1)
+
+@app.route("/tour_page")
+@auth.oidc_auth('default')
+@audiophiler_auth
+def admin_def(auth_dict=None):
+    return redirect("/tour_page/1")
 
 @app.route("/tour_page/<int:page>")
 @auth.oidc_auth('default')
 @audiophiler_auth
 def admin(page, auth_dict=None):
-    rows = File.query.count()
+    query = File.query.filter(File.file_hash.in_(tour_harolds))
+    rows = query.count()
+
+    if page > rows or page < 1:
+        return "Page Out of Bounds", 404
+
     rows = int(rows // 10 + bool(rows % 10))
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
     if is_eboard or is_rtp:
         harolds = get_harold_list(auth_dict["uid"])
         tour_harolds = get_harold_list("root")
-        db_files = File.query.filter(File.file_hash.in_(tour_harolds)).offset((page-1) * 10).limit(10).all()
+        db_files = query.offset((page-1) * 10).limit(10).all()
         return render_template("main.html", db_files=db_files,
             get_date_modified=get_date_modified, s3_bucket=s3_bucket,
             auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
             is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=True, is_tour_mode=get_tour_lock_status(),
-            current="/tour_page",page=page, rows=rows)
+            current="/tour_page", page=page, rows=rows, begin=max(1, page-6), end=min(page+6, rows) + 1)
 
     return "Permission Denied", 403
 
