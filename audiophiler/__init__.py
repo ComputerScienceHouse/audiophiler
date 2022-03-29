@@ -81,7 +81,7 @@ def home(page, auth_dict=None):
     db_files = File.query.offset((page-1) * 10).limit(10).all()
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
-    
+
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
 
@@ -144,7 +144,7 @@ def selected(page, auth_dict=None):
 
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
-    
+
     tour_harolds = get_harold_list("root")
     db_files = query.offset((page-1) * 10).limit(10).all()
     return render_template("main.html", db_files=db_files,
@@ -164,18 +164,19 @@ def admin_def(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def admin(page, auth_dict=None):
+    tour_harolds = get_harold_list("root")
     query = File.query.filter(File.file_hash.in_(tour_harolds))
     rows = query.count()
+    rows = int(rows // 10 + bool(rows % 10))
 
     if page > rows or page < 1:
         return "Page Out of Bounds", 404
 
-    rows = int(rows // 10 + bool(rows % 10))
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
+
     if is_eboard or is_rtp:
         harolds = get_harold_list(auth_dict["uid"])
-        tour_harolds = get_harold_list("root")
         db_files = query.offset((page-1) * 10).limit(10).all()
         return render_template("main.html", db_files=db_files,
             get_date_modified=get_date_modified, s3_bucket=s3_bucket,
