@@ -10,3 +10,4 @@ psycopg2
 requests
 csh_ldap
 pylint
+boto

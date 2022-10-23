@@ -81,5 +81,20 @@
                 </div>
             {% endif %}
         {% endfor %}
+        <div class="text-center">
+        <nav aria-label="audio nav">
+        <ul class="pagination justify-content-center">
+        {% if page != 1 %}
+          <li class="page-item">
+            <a class="page-link" href="{{ route }}?page={{ page-1 }}">Previous</a>
+          </li>
+        {% endif %}
+          <li class="page-item">
+            <a class="page-link" href="{{ route }}?page={{ page+1 }}">Next</a>
+          </li>
+        </ul>
+      </nav>
     </div>
+    </div>
+    
 {% endblock %}
