@@ -60,6 +60,8 @@ from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
 
+default_size = app.config["PAGE_SIZE"]
+
 @app.route("/")
 @auth.oidc_auth('default')
 @audiophiler_auth
@@ -68,13 +70,14 @@ def home(auth_dict=None):
     page = args.get("page", default=1, type=int)
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
+    page_size = args.get("size",default=default_size, type=int)
     # Retrieve list of files for templating
     db_files = File.query
     if name:
         db_files = db_files.filter(File.name.like(f"%{name}%"))
     if author:
         db_files = db_files.filter(File.author == author)
-    db_files = db_files.paginate(page=page, per_page=20).items
+    db_files = db_files.paginate(page=page, per_page=page_size).items
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
     is_rtp = ldap_is_rtp(auth_dict["uid"])
@@ -91,11 +94,12 @@ def mine(auth_dict=None):
     args = request.args
     page = args.get("page", default=1, type=int)
     name = args.get("name", default=None, type=str)
+    page_size = args.get("size",default=default_size, type=int)
     # Retrieve list of files for templating
     db_files = File.query.filter_by(author=auth_dict["uid"])
     if name:
         db_files = db_files.filter(File.name.like(f"%{name}%"))
-    db_files = db_files.paginate(page=page, per_page=20).items
+    db_files = db_files.paginate(page=page, per_page=page_size).items
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
     # Retrieve list of files for templating
@@ -114,6 +118,7 @@ def selected(auth_dict=None):
     page = args.get("page", default=1, type=int)
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
+    page_size = args.get("size",default=default_size, type=int)
     # Retrieve list of files for templating
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
@@ -125,7 +130,7 @@ def selected(auth_dict=None):
         db_files = db_files.filter(File.name.like(f"%{name}%"))
     if author:
         db_files = db_files.filter(File.author == author)
-    db_files = db_files.paginate(page=page, per_page=20).items
+    db_files = db_files.paginate(page=page, per_page=page_size).items
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
@@ -139,6 +144,7 @@ def admin(auth_dict=None):
     page = args.get("page", default=1, type=int)
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
+    page_size = args.get("size",default=default_size, type=int)
     is_rtp = ldap_is_rtp(auth_dict["uid"])
     is_eboard = ldap_is_eboard(auth_dict["uid"])
     if is_eboard or is_rtp:
@@ -149,7 +155,7 @@ def admin(auth_dict=None):
             db_files = db_files.filter(File.name.like(f"%{name}%"))
         if author:
             db_files = db_files.filter(File.author == author)
-        db_files = db_files.paginate(page=page, per_page=20).items
+        db_files = db_files.paginate(page=page, per_page=page_size).items
         return render_template("main.html", db_files=db_files,
             get_date_modified=get_date_modified, s3_bucket=s3_bucket,
             auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
