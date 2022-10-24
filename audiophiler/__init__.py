@@ -108,7 +108,8 @@ def mine(auth_dict=None):
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
-                tour_harolds=tour_harolds, is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False, route="mine")
+                tour_harolds=tour_harolds, is_rtp=is_rtp, is_eboard=is_eboard,
+                is_tour_page=False, route="mine", page=page)
 
 @app.route("/selected")
 @auth.oidc_auth('default')
@@ -134,7 +135,8 @@ def selected(auth_dict=None):
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
-                is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False, route="selected")
+                is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False,
+                route="selected", page=page)
 
 @app.route("/tour_page")
 @auth.oidc_auth('default')
@@ -160,7 +162,8 @@ def admin(auth_dict=None):
             get_date_modified=get_date_modified, s3_bucket=s3_bucket,
             auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
             is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=True,
-            is_tour_mode=get_tour_lock_status(), route="tour_page")
+            is_tour_mode=get_tour_lock_status(), route="tour_page",
+            page=page)
 
     return "Permission Denied", 403
 
