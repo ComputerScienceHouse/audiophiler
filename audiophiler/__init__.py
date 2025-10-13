@@ -5,7 +5,6 @@ import hashlib
 import os
 import random
 import subprocess
-import json
 import requests
 import flask_migrate
 from flask import Flask, render_template, request, jsonify, redirect
@@ -13,7 +12,6 @@ from flask_pyoidc.provider_configuration import *
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from csh_ldap import CSHLDAP
 
 from audiophiler.s3 import *
 
@@ -50,12 +48,6 @@ migrate = flask_migrate.Migrate(app, db)
 from audiophiler.models import File, Harold, Auth, Tour
 from audiophiler.util import *
 
-# Create CSHLDAP connection
-ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
-               app.config["LDAP_BIND_PW"])
-
-# Import ldap functions after creating ldap conn
-from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
@@ -80,8 +72,8 @@ def home(auth_dict=None):
     db_files = db_files.paginate(page=page, per_page=page_size).items
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
+    is_rtp = 'active_rtp' in auth_dict["groups"]
+    is_eboard = 'eboard' in auth_dict["groups" ]
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
