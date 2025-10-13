@@ -24,9 +24,6 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
-git_cmd = ['git', 'rev-parse', '--short', 'HEAD']
-app.config["GIT_REVISION"] = subprocess.check_output(git_cmd).decode('utf-8').rstrip()
-
 _config = ProviderConfiguration(
     app.config['OIDC_ISSUER'],
     client_metadata = ClientMetadata(

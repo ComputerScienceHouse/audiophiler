@@ -17,6 +17,9 @@ OIDC_CLIENT_CONFIG = {
     "post_logout_redirect_uris": [os.getenv("OIDC_LOGOUT_REDIRECT_URI", default="https://audiophiler.csh.rit.edu/logout")]
 }
 
+# Git Hash
+GIT_REVISION = os.getenv("GIT_REVISION", default="UNKNOWN").rstrip()
+
 # Openshift secret
 SECRET_KEY = os.getenv("SECRET_KEY", default=''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(64)))
 
