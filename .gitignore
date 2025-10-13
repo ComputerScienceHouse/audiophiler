@@ -1,3 +1,5 @@
+.vscode/
+.idea/
 __pycache__
 *env
 config.py
@@ -7,4 +9,3 @@ AUTHORS
 ChangeLog
 creds
 .eggs
-.vscode
