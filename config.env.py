@@ -16,7 +16,7 @@ OIDC_CLIENT_CONFIG = {
     "client_secret": os.getenv("OIDC_CLIENT_SECRET", default=None),
     "post_logout_redirect_uris": [os.getenv("OIDC_LOGOUT_REDIRECT_URI", default="https://audiophiler.csh.rit.edu/logout")]
 }
-OIDC_REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", default="https://"+SERVER_NAME)
+OIDC_REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", default="https://"+SERVER_NAME+"/redirect_uri")
 
 # Git Hash
 GIT_REVISION = os.getenv("GIT_REVISION", default="UNKNOWN").rstrip()
