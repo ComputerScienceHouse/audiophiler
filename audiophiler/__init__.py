@@ -129,7 +129,7 @@ def admin(auth_dict=None):
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
     page_size = args.get("size",default=default_size, type=int)
-    if is_eboard or is_rtp:
+    if auth_dict["is_rtp"] or auth_dict["is_eboard"]:
         harolds = get_harold_list(auth_dict["uid"])
         tour_harolds = get_harold_list("root")
         db_files = File.query.filter(File.file_hash.in_(tour_harolds))
