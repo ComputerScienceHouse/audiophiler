@@ -60,8 +60,6 @@ def home(auth_dict=None):
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
     page_size = args.get("size",default=default_size, type=int)
-    print('balls')
-    print(auth_dict)
     # Retrieve list of files for templating
     db_files = File.query
     if name:

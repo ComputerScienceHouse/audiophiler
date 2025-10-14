@@ -10,7 +10,6 @@ from audiophiler.models import Tour
 def audiophiler_auth(func):
     @wraps(func)
     def wrapped_function(*args, **kwargs):
-        print(session["userinfo"])
         uuid = str(session["userinfo"].get("sub", ""))
         uid = str(session["userinfo"].get("preferred_username", ""))
         groups = str(session["userinfo"].get("groups", []))
