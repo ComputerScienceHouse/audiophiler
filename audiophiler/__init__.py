@@ -151,14 +151,15 @@ def admin(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def upload_page(auth_dict=None):
-    return render_template("upload.html", is_rtp=auth_dict["is_rtp"], is_eboard=auth_dict["is_eboard"], auth_dict=auth_dict)
+    return render_template("upload.html", is_rtp=auth_dict["is_rtp"], 
+                           is_eboard=auth_dict["is_eboard"], auth_dict=auth_dict)
 
 @app.route("/upload", methods=["POST"])
 @auth.oidc_auth('default')
 @audiophiler_auth
 def upload(auth_dict=None):
     uploaded_files = [t[1] for t in request.files.items()]
-    upload_status = dict()
+    upload_status = {}
     upload_status["error"] = []
     upload_status["success"] = []
 
