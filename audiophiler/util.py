@@ -17,6 +17,8 @@ def audiophiler_auth(func):
             "uuid": uuid,
             "uid": uid,
             "groups": groups,
+            "is_rtp": 'active_rtp' in groups,
+            "is_eboard": 'eboard' in groups,
         }
         kwargs["auth_dict"] = auth_dict
         return func(*args, **kwargs)
