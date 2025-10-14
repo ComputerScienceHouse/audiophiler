@@ -60,6 +60,8 @@ def home(auth_dict=None):
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
     page_size = args.get("size",default=default_size, type=int)
+    print('balls')
+    print(auth_dict)
     # Retrieve list of files for templating
     db_files = File.query
     if name:
@@ -69,7 +71,6 @@ def home(auth_dict=None):
     db_files = db_files.paginate(page=page, per_page=page_size).items
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
-    print(auth_dict)
     is_rtp = 'active_rtp' in auth_dict["groups"]
     is_eboard = 'eboard' in auth_dict["groups" ]
     return render_template("main.html", db_files=db_files,
