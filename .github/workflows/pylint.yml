@@ -15,11 +15,9 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.6]
+        python-version: [3.9]
 
     steps:
-      - name: Install ldap dependencies
-        run: sudo apt-get update && sudo apt-get install libldap2-dev libsasl2-dev
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -27,7 +25,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          #python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Lint with pylint
         run: |

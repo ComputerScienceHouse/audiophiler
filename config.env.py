@@ -19,7 +19,7 @@ OIDC_CLIENT_CONFIG = {
 OIDC_REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", default="https://"+SERVER_NAME+"/redirect_uri")
 
 # Git Hash
-with open('commit.txt') as f: s = f.read()
+with open('commit.txt') as f: s = f.read().rstrip()
 GIT_REVISION = s
 
 # Openshift secret
