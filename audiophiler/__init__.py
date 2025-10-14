@@ -69,6 +69,7 @@ def home(auth_dict=None):
     db_files = db_files.paginate(page=page, per_page=page_size).items
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
+    print(auth_dict)
     is_rtp = 'active_rtp' in auth_dict["groups"]
     is_eboard = 'eboard' in auth_dict["groups" ]
     return render_template("main.html", db_files=db_files,
