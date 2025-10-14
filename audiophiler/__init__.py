@@ -151,7 +151,7 @@ def admin(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def upload_page(auth_dict=None):
-    return render_template("upload.html", is_rtp=auth_dict["is_rtp"], 
+    return render_template("upload.html", is_rtp=auth_dict["is_rtp"],
                            is_eboard=auth_dict["is_eboard"], auth_dict=auth_dict)
 
 @app.route("/upload", methods=["POST"])
