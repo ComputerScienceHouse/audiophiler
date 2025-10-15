@@ -1,8 +1,11 @@
-FROM docker.io/python:3.9
+#FROM docker.io/python:3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
+
+RUN apk add git
 
 WORKDIR /app
 COPY . ./
 RUN git rev-parse --short HEAD > commit.txt
-RUN pip install -r requirements.txt
+RUN uv pip install -r requirements.txt --system
 
 CMD ["gunicorn", "-b", "0.0.0.0", "audiophiler:app"]
