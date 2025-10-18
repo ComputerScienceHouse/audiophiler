@@ -1,5 +1,5 @@
 #FROM docker.io/python:3.13-alpine
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.9-alpine
 
 RUN apk add git
 
