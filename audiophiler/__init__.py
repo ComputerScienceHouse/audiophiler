@@ -5,7 +5,6 @@ import hashlib
 import os
 import random
 import subprocess
-import json
 import requests
 import flask_migrate
 from flask import Flask, render_template, request, jsonify, redirect
@@ -13,7 +12,6 @@ from flask_pyoidc.provider_configuration import *
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from csh_ldap import CSHLDAP
 
 from audiophiler.s3 import *
 
@@ -25,9 +23,6 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
-
-git_cmd = ['git', 'rev-parse', '--short', 'HEAD']
-app.config["GIT_REVISION"] = subprocess.check_output(git_cmd).decode('utf-8').rstrip()
 
 _config = ProviderConfiguration(
     app.config['OIDC_ISSUER'],
@@ -50,12 +45,6 @@ migrate = flask_migrate.Migrate(app, db)
 from audiophiler.models import File, Harold, Auth, Tour
 from audiophiler.util import *
 
-# Create CSHLDAP connection
-ldap = CSHLDAP(app.config["LDAP_BIND_DN"],
-               app.config["LDAP_BIND_PW"])
-
-# Import ldap functions after creating ldap conn
-from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
@@ -80,12 +69,10 @@ def home(auth_dict=None):
     db_files = db_files.paginate(page=page, per_page=page_size).items
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
-                is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False, route="", page=page)
+                is_rtp=auth_dict["is_rtp"], is_eboard=auth_dict["is_eboard"], is_tour_page=False, route="", page=page)
 
 @app.route("/mine")
 @auth.oidc_auth('default')
@@ -100,15 +87,13 @@ def mine(auth_dict=None):
     if name:
         db_files = db_files.filter(File.name.like(f"%{name}%"))
     db_files = db_files.paginate(page=page, per_page=page_size).items
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     # Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
     return render_template("main.html", db_files=db_files,
                 get_file_s3=get_file_s3, get_date_modified=get_date_modified,
                 s3_bucket=s3_bucket, auth_dict=auth_dict, harolds=harolds,
-                tour_harolds=tour_harolds, is_rtp=is_rtp, is_eboard=is_eboard,
+                tour_harolds=tour_harolds, is_rtp=auth_dict["is_rtp"], is_eboard=auth_dict["is_eboard"],
                 is_tour_page=False, route="mine", page=page)
 
 @app.route("/selected")
@@ -120,9 +105,6 @@ def selected(auth_dict=None):
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
     page_size = args.get("size",default=default_size, type=int)
-    # Retrieve list of files for templating
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     #Retrieve list of files for templating
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
@@ -135,7 +117,7 @@ def selected(auth_dict=None):
     return render_template("main.html", db_files=db_files,
                 get_date_modified=get_date_modified, s3_bucket=s3_bucket,
                 auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
-                is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=False,
+                is_rtp=auth_dict["is_rtp"], is_eboard=auth_dict["is_eboard"], is_tour_page=False,
                 route="selected", page=page)
 
 @app.route("/tour_page")
@@ -147,9 +129,7 @@ def admin(auth_dict=None):
     name = args.get("name", default=None, type=str)
     author = args.get("author", default=None, type=str)
     page_size = args.get("size",default=default_size, type=int)
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
-    if is_eboard or is_rtp:
+    if auth_dict["is_rtp"] or auth_dict["is_eboard"]:
         harolds = get_harold_list(auth_dict["uid"])
         tour_harolds = get_harold_list("root")
         db_files = File.query.filter(File.file_hash.in_(tour_harolds))
@@ -161,7 +141,7 @@ def admin(auth_dict=None):
         return render_template("main.html", db_files=db_files,
             get_date_modified=get_date_modified, s3_bucket=s3_bucket,
             auth_dict=auth_dict, harolds=harolds, tour_harolds=tour_harolds,
-            is_rtp=is_rtp, is_eboard=is_eboard, is_tour_page=True,
+            is_rtp=auth_dict["is_rtp"], is_eboard=auth_dict["is_eboard"], is_tour_page=True,
             is_tour_mode=get_tour_lock_status(), route="tour_page",
             page=page)
 
@@ -171,9 +151,8 @@ def admin(auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def upload_page(auth_dict=None):
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
-    return render_template("upload.html", is_rtp=is_rtp, is_eboard=is_eboard, auth_dict=auth_dict)
+    return render_template("upload.html", is_rtp=auth_dict["is_rtp"],
+                           is_eboard=auth_dict["is_eboard"], auth_dict=auth_dict)
 
 @app.route("/upload", methods=["POST"])
 @auth.oidc_auth('default')
@@ -233,7 +212,7 @@ def delete_file(file_hash, auth_dict=None):
         return "File Not Found", 404
 
     if not auth_dict["uid"] == file_model.author:
-        if not (ldap_is_eboard(auth_dict["uid"]) or ldap_is_rtp(auth_dict["uid"])):
+        if not auth_dict["is_rtp"] or auth_dict["is_eboard"]:
             return "Permission Denied", 403
 
     # Delete file model
@@ -259,10 +238,8 @@ def get_s3_url(file_hash, auth_dict=None):
 @audiophiler_auth
 def set_harold(file_hash, auth_dict=None):
     is_tour = request.json["tour"]
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     if is_tour == "true":
-        if (is_rtp or is_eboard):
+        if auth_dict["is_rtp"] or auth_dict["is_eboard"]:
             uid = "root"
         else:
             return "Not Authorized", 403
@@ -280,10 +257,8 @@ def set_harold(file_hash, auth_dict=None):
 @audiophiler_auth
 def remove_harold(file_hash, auth_dict=None):
     is_tour = request.json["tour"]
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
     if is_tour == "true":
-        if is_rtp or is_eboard:
+        if auth_dict["is_rtp"] or auth_dict["is_eboard"]:
             uid = "root"
         else:
             return "Not Authorized", 403
@@ -328,9 +303,7 @@ def get_harold(uid, auth_dict=None):
 @auth.oidc_auth('default')
 @audiophiler_auth
 def toggle_tour_mode(auth_dict=None):
-    is_rtp = ldap_is_rtp(auth_dict["uid"])
-    is_eboard = ldap_is_eboard(auth_dict["uid"])
-    if is_rtp or is_eboard:
+    if auth_dict["is_rtp"] or auth_dict["is_eboard"]:
         admin_query = Tour.query.first()
         if request.json["state"] == "t":
             admin_query.tour_lock = True

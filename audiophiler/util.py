@@ -12,9 +12,13 @@ def audiophiler_auth(func):
     def wrapped_function(*args, **kwargs):
         uuid = str(session["userinfo"].get("sub", ""))
         uid = str(session["userinfo"].get("preferred_username", ""))
+        groups = str(session["userinfo"].get("groups", []))
         auth_dict = {
             "uuid": uuid,
-            "uid": uid
+            "uid": uid,
+            "groups": groups,
+            "is_rtp": 'active_rtp' in groups,
+            "is_eboard": 'eboard' in groups,
         }
         kwargs["auth_dict"] = auth_dict
         return func(*args, **kwargs)

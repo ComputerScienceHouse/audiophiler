@@ -16,16 +16,17 @@ OIDC_CLIENT_CONFIG = {
     "client_secret": os.getenv("OIDC_CLIENT_SECRET", default=None),
     "post_logout_redirect_uris": [os.getenv("OIDC_LOGOUT_REDIRECT_URI", default="https://audiophiler.csh.rit.edu/logout")]
 }
+OIDC_REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", default="https://"+SERVER_NAME+"/redirect_uri")
+
+# Git Hash
+with open('commit.txt') as f: s = f.read().rstrip()
+GIT_REVISION = s
 
 # Openshift secret
 SECRET_KEY = os.getenv("SECRET_KEY", default=''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(64)))
 
 # Database credentials
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", default=None)
-
-# CSH_LDAP credentials
-LDAP_BIND_DN = os.getenv("LDAP_BIND_DN", default="cn=audiophiler,ou=Apps,dc=csh,dc=rit,dc=edu")
-LDAP_BIND_PW = os.getenv("LDAP_BIND_PW", default=None)
 
 PLUG_SUPPORT = os.environ.get('PLUG_ENABLED', False)
 
