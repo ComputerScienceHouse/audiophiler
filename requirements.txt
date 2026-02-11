@@ -21,7 +21,7 @@ charset-normalizer==3.4.3
     # via requests
 click==8.1.8
     # via flask
-cryptography==46.0.2
+cryptography==46.0.5
     # via oic
 defusedxml==0.7.1
     # via oic
@@ -79,7 +79,7 @@ packaging==25.0
     # via gunicorn
 platformdirs==4.4.0
     # via pylint
-psycopg2-binary==2.9.11
+psycopg2==2.9.11
     # via -r requirements.in
 pycparser==2.23
     # via cffi
